@@ -1,0 +1,1 @@
+this is test text for the file conflictTest.md
