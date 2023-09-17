@@ -20,7 +20,7 @@ I've always loved playing a pass-n-play scratch game like tic-tac-toe on a peice
 
 ## Technologies
 
-**HTML** - use HTML structure for application. 4 main html pages. one for login, one for profile and friendships, one for recent games page, and one for actual gameplay (online/local/vs cpu)
-**DB** - Stores username/login, and user's record and recent games, as well as friendships between users
-**Authenication/Login** - Register and login users. credentials stored in database. Can still play games as guest, but records are not stored
-**WebSocket** - user's taking turns in real time to know who goes when
+- **HTML** - use HTML structure for application. 4 main html pages. one for login, one for profile and friendships, one for recent games page, and one for actual gameplay (online/local/vs cpu)
+- **DB** - Stores username/login, and user's record and recent games, as well as friendships between users
+- **Authenication/Login** - Register and login users. credentials stored in database. Can still play games as guest, but records are not stored
+- **WebSocket** - user's taking turns in real time to know who goes when
