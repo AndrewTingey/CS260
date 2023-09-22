@@ -24,7 +24,3 @@ I've always loved playing a pass-n-play scratch game like tic-tac-toe on a peice
 - **DB** - Stores username/login, and user's record and recent games, as well as friendships between users
 - **Authenication/Login** - Register and login users. credentials stored in database. Can still play games as guest, but records are not stored
 - **WebSocket** - user's taking turns in real time to know who goes when
-
-
-this is a new change to readme.md
-
