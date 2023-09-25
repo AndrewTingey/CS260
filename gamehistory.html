@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Tell browsers not to scale the viewport automatically -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ultimate Tic-Tac-Toe</title>
+    <link rel="icon" href="favicon.ico" />
+    <style>
+        table {
+          border-collapse: collapse;
+        }
+      
+        th, td {
+          border: 1px solid black;
+          padding: 8px;
+          text-align: left;
+        }
+      </style>
+  </head>
+  <body>
+    <!-- Use header, main, and footer elements to give semantic structure -->
+    <header>
+      <h1>Ultimate Tic-Tac-Toe<sup>&reg;</sup></h1>
+
+      <!-- Navigation elements -->
+      <nav>
+        <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
+        <menu>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="play.html">Play</a></li>
+          <li><a href="gamehistory.html">Game Log</a></li>
+          <li><a href="about.html">About</a></li>
+        </menu>
+      </nav>
+
+      <!-- Since we don't have the ability to style we use old style HTML to give some visual formatting -->
+      <hr />
+    </header>
+
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Versus</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2020-10-01</td>
+                    <td>Andrew (acoolusername)</td>
+                    <td>Win</td>
+                </tr>
+                <tr>
+                    <td>2020-10-02</td>
+                    <td>Professor (BYUCS_is_cool)</td>
+                    <td>Cat scratch</td>
+                </tr>
+                <tr>
+                    <td>2020-10-03</td>
+                    <td>Local Multiplayer</td>
+                    <td>X's</td>
+                </tr>
+                <tr>
+                    <td>2020-10-04</td>
+                    <td>Computer (lvl. 9)</td>
+                    <td>Loss</td>
+                </tr>
+            </tbody>
+
+
+        </table>
+    </main>
+
+
+    <footer>
+        <hr />
+        <span class="text-reset">Made by Andrew Tingey</span>
+        <br />
+        <a href="https://github.com/AndrewTingey/CS260">GitHub</a>
+      </footer>
+    </body>
+  </html>
