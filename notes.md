@@ -11,6 +11,8 @@ these are my notes for my repository
 	git pull
 		andrewtingey
 		*PAT*
+
+	git clone https://github.com/webprogramming260/simon-html.git
 ```
 
 ## Deploy Files to Production Environment
