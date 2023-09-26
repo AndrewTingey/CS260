@@ -24,3 +24,15 @@ I've always loved playing a pass-n-play scratch game like tic-tac-toe on a peice
 - **DB** - Stores username/login, and user's record and recent games, as well as friendships between users
 - **Authenication/Login** - Register and login users. credentials stored in database. Can still play games as guest, but records are not stored
 - **WebSocket** - user's taking turns in real time to know who goes when
+
+## HTML Deliverable
+
+For this delliverable I built out the structure of my app using only HTML
+
+- **HTML Pages** - 4 html pages represent the ability to login, play the game, view previous games and an about page. Only missing a profile page to show own profile, but this will be the same as home page/login screen
+- **Links** - The header of each html file brings you to each other file in html, as a menu to view all files
+- **Tables** - The gameboard of ultimate tic tac toe is 3x3 within a 3x3 board this was represented by literally putting 9 tables as the data entries of a 3x3 table.
+- **Images** - I added a game like royalty free image of chess to the about section to make the page look prettier
+- **Login** - theres a input box and submit button for logging in
+- **Database** - Theoretically, the game history of each user will be drawn from the database of past games
+- **WebSocket**
