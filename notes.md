@@ -24,14 +24,18 @@ these are my notes for my repository
   For example,
 
   ```sh
-  ./deployFiles.sh -k ~/keys/production.pem -h yourdomain.click -s simon
+  ./deployFiles.sh -k /Users/andrewtingey/Documents/2023\ Fall/CS\ 260/Key/TingeyCS260.pem -h andrewt.click -s simon
   ```
 
   ⚠ Make sure you run `deployFiles.sh` from the console in your project directory.
 
 Note:
 First time running ./deployFiles.sh access was denied. To make file an executable run the following shell script:
-```chmod +x deployFiles.sh```
+```
+chmod +x deployFiles.sh
+```
 
 Also, to reference terminal commands use the 'man' command to read the manual. For example:
-```man chmod```
+```
+man chmod
+```
