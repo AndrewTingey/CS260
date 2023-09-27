@@ -35,4 +35,4 @@ For this delliverable I built out the structure of my app using only HTML
 - **Images** - I added a game like royalty free image of chess to the about section to make the page look prettier
 - **Login** - theres a input box and submit button for logging in
 - **Database** - Theoretically, the game history of each user will be drawn from the database of past games
-- **WebSocket**
+- **WebSocket** - I added a chat box to the bottom of the play screen that would allow the user to communicate with their opponent from the game
