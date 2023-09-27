@@ -10,14 +10,18 @@
     <style>
         .outer-table {
             border-collapse: collapse;
-            width: 600px;
+            width: 100%;
+            max-width: 600px;
             border: 1px solid #ffffffb6;
             margin: auto;
+            padding-top: 100%;
+            position: relative;
         }
 
         .inner-table {
             border-collapse: collapse;
-            width: 200px;
+            width: 100%;
+            max-width: 200px;
             border: 1px solid #000;
         }
 
@@ -25,6 +29,7 @@
             border: 1px solid #000;
             text-align: center;
             vertical-align: middle;
+            position: absolute;
             padding: 8px;
             height: 50px;
             width: 33.33%;
