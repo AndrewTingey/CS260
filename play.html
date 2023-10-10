@@ -6,37 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ultimate Tic-Tac-Toe</title>
     <link rel="icon" href="favicon.ico" />
+    <link rel="stylesheet" href="style.css">
   </head>
-    <style>
-        .outer-table {
-            border-collapse: collapse;
-            width: 100%;
-            max-width: 600px;
-            border: 1px solid #ffffffb6;
-            margin: auto;
-            padding-top: 100%;
-        }
-        .inner-table {
-            border-collapse: collapse;
-            width: 100%;
-            max-width: 200px;
-            border: 1px solid #000;
-            padding-top: 100%;
-        }
-
-        th, td {
-            border: 1px solid #000;
-            text-align: center;
-            vertical-align: middle;
-            padding: 8px;
-            height: 50px;
-            width: 33.33%;
-        }
-        
-        tr:first {
-            font-weight: normal;
-        }
-    </style>
+  
   <body>
     <!-- Use header, main, and footer elements to give semantic structure -->
     <header>
@@ -71,175 +43,175 @@
                     <table class="inner-table">
                         <tr>
                             <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
+                            <td class="vertical"></td>
                             <td></td>
                         </tr>
                         <tr>
+                            <td class="horizontal"></td>
+                            <td class="vertical horizontal"></td>
+                            <td class="horizontal"></td>
+                        </tr>
+                        <tr>
                             <td></td>
-                            <td></td>
+                            <td class="vertical"></td>
                             <td></td>
                         </tr>
+                    </table>
+                </td>
+                <td class="big-vertical">
+                    <table class="inner-table">
+                      <tr>
+                        <td></td>
+                        <td class="vertical"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="horizontal"></td>
+                        <td class="vertical horizontal"></td>
+                        <td class="horizontal"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="vertical"></td>
+                        <td></td>
+                    </tr>
                     </table>
                 </td>
                 <td>
                     <table class="inner-table">
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table class="inner-table">
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td>O</td>
-                        </tr>
+                      <tr>
+                        <td></td>
+                        <td class="vertical"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="horizontal"></td>
+                        <td class="vertical horizontal"></td>
+                        <td class="horizontal"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="vertical"></td>
+                        <td>O</td>
+                    </tr>
                     </table>
                 </td>
             </tr>
             <tr>
-              <td>
+              <td class="big-horizontal">
                 <table class="inner-table">
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
                 </table>
               </td>
-              <td>
+              <td class="big-horizontal big-vertical">
                 <table class="inner-table">
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td>X</td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td>X</td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
                 </table>
               </td>
-              <td>
+              <td class="big-horizontal">
                 <table class="inner-table">
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
                 </table>
               </td>
             </tr>
             <tr>
               <td>
                 <table class="inner-table">
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                </table>
+              </td>
+              <td class="big-vertical">
+                <table class="inner-table">
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
                 </table>
               </td>
               <td>
                 <table class="inner-table">
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                </table>
-              </td>
-              <td>
-                <table class="inner-table">
-                    <tr>
-                      <td>X</td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+                  <tr>
+                    <td>X</td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
                 </table>
               </td>
             </tr>
