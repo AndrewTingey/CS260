@@ -22,12 +22,30 @@
 }
 
 header {
+    flex: 0 80px;
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
     font-weight: 300;
     color: var(--text-color);
     background-color: var(--background-color);
 }
+
+nav menu {
+    flex: auto;
+    justify-content: flex-start;
+    font-size: large;
+  }
+  
+  nav a{
+    color: var(--text-color);
+    text-decoration: none;
+    margin-right: 15px;
+  }
+
+  nav a:hover {
+    text-decoration: underline;
+    color: var(--primary-color);
+  }
 
 body {
     font-family: 'Roboto', sans-serif;
