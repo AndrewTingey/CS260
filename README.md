@@ -36,3 +36,15 @@ For this delliverable I built out the structure of my app using only HTML
 - **Login** - theres a input box and submit button for logging in
 - **Database** - Theoretically, the game history of each user will be drawn from the database of past games
 - **WebSocket** - I added a chat box to the bottom of the play screen that would allow the user to communicate with their opponent from the game
+
+## CSS Deliverable
+
+For this delliverable I made my website prettier with CSS and bootstrap
+
+- **Header, Footer, Main content bodies** 
+- **Navigation** - The active screen shows up in bold and in a different color, as well as when you hover over the tab it underlines it as well.
+- **Responsive windo design** - The website changes fills to fit all sized screens
+- **Themed colors** - I added a colors to the page so that each one follows similar color schemes
+- **Bootstrap** - I mostly used bootstrap in the login screen, however admittedly all the links are fake links and do anything yet
+- **Tables** - I made the table on the game history such that when you hover over a element it highlights the whole row
+- **CSS** - On the play screen i added horizontal and vertical line elements in css to be able to use them on every other box and create what looks like a tic tac toe grid.
