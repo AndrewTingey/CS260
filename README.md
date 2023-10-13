@@ -39,7 +39,7 @@ For this delliverable I built out the structure of my app using only HTML
 
 ## CSS Deliverable
 
-For this delliverable I made my website prettier with CSS and bootstrap
+For this delliverable I made my website prettier with CSS and added bootstrap
 
 - **Header, Footer, Main content bodies** 
 - **Navigation** - The active screen shows up in bold and in a different color, as well as when you hover over the tab it underlines it as well.
