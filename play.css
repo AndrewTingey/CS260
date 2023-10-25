@@ -53,3 +53,15 @@ main h1, p {
     text-align: center;
     font-family: sans-serif;
 }
+
+@media screen and (max-width: 600px) {
+    .outer-table {
+        height: 100vw;
+    }
+    .inner-table {
+        height: 33.33vw;
+    }
+    th, td {
+        font-size: 4vw;
+    }
+}

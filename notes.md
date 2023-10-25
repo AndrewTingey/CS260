@@ -110,4 +110,7 @@ nothings here
 32. Can a DNS A record can point to an IP address or another A record.
   - Route 53, what can you put into domain?
 33. Port 443, 80, 22 is reserved for which protocol?
+  - 80: HTTP
+  - 443: HTTPS
+  - 22: SSH
 34. What will the following code using Promises output when executed?
