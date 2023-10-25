@@ -39,7 +39,7 @@ function smallCellEventListener() {
         clickedJ = this.parentNode.parentNode.parentNode.parentNode.cellIndex;
         clickedi = this.parentNode.rowIndex;
         clickedj = this.cellIndex;
-        console.log("I: " + clickedI + "\nJ: " + clickedJ + "\ni: " + clickedi + "\nj: " + clickedj);
+        //console.log("I: " + clickedI + "\nJ: " + clickedJ + "\ni: " + clickedi + "\nj: " + clickedj);
         if (validMove(clickedI, clickedJ, clickedi, clickedj)) {
             this.textContent = playerTurn;
             updateBoard(clickedI, clickedJ, clickedi, clickedj);
@@ -55,8 +55,7 @@ function updateBoard(bigI, bigJ, lili, lilj) {
     prevj = lilj;
     prevI = bigI;
     prevJ = bigJ;
- //   console.log("This is cell I: " + bigI + " J: " + bigJ + " i: " + lili + " j: " + lilj + " and it has been updated to " + playerTurn);
-}
+ }
 
 //returns true if valid move, false if invalid
 function validMove (bigI, bigJ, lili, lilj) {
@@ -67,7 +66,7 @@ function validMove (bigI, bigJ, lili, lilj) {
             return true;
         }
     }
-    console.log("This is cell I: " + bigI + " J: " + bigJ + " i: " + lili + " j: " + lilj + " and it has already been played");
+    //console.log("This is cell I: " + bigI + " J: " + bigJ + " i: " + lili + " j: " + lilj + " and it has already been played");
     return false;
 }
 
@@ -77,6 +76,7 @@ function nextTurn() {
     } else if (playerTurn == "O") {
         playerTurn = "X";
     }
+    highlightBoard();
     document.getElementById("player-turn-label").innerHTML = playerTurn + "'s turn";
 }
 
@@ -124,4 +124,33 @@ function is_full(board) {
         }
     }
     return true;
+}
+
+function highlightBoard() {
+    var largeTables = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board");
+    for (var i = 0; i < largeTables.length; i++) {
+        largeTables[i].style.backgroundColor = "var(--background-color)";
+    }
+    
+    console.log ("previ: " + previ + " prevj: " + prevj);
+
+    if (previ == 0 && prevj == 0) { //top left
+        largeTables[0].style.backgroundColor = "var(--highlight-color)";
+    } else if (previ == 0 && prevj == 1) { //top middle
+        largeTables[1].style.backgroundColor = "var(--highlight-color)";
+    } else if (previ == 0 && prevj == 2) { //top right
+        largeTables[2].style.backgroundColor = "var(--highlight-color)";
+    } else if (previ == 1 && prevj == 0) { //middle left
+        largeTables[3].style.backgroundColor = "var(--highlight-color)";
+    } else if (previ == 1 && prevj == 1) { //middle middle
+        largeTables[4].style.backgroundColor = "var(--highlight-color)";
+    } else if (previ == 1 && prevj == 2) { //middle right
+        largeTables[5].style.backgroundColor = "var(--highlight-color)";
+    } else if (previ == 2 && prevj == 0) { //bottom left
+        largeTables[6].style.backgroundColor = "var(--highlight-color)";
+    } else if (previ == 2 && prevj == 1) { //bottom middle
+        largeTables[7].style.backgroundColor = "var(--highlight-color)";
+    } else if (previ == 2 && prevj == 2) { //bottom right
+        largeTables[8].style.backgroundColor = "var(--highlight-color)";
+    }
 }
