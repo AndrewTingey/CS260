@@ -1,12 +1,13 @@
 var playerTurn = "X";
-var prevI = 0;
-var prevJ = 0;
-var previ = 0;
-var prevj = 0;
+var prevI = -1;
+var prevJ = -1;
+var previ = -1;
+var prevj = -1;
 var clickedI = 0;
 var clickedJ = 0;
 var clickedi = 0;   
 var clickedj = 0;
+var gameWinner = null;
 
 //initialize full board
 let bigBoard = [];
@@ -54,33 +55,34 @@ function updateBoard(bigI, bigJ, lili, lilj) {
     prevj = lilj;
     prevI = bigI;
     prevJ = bigJ;
-    if(checkWinner(bigBoard[bigI][bigJ])) {
-        //TODO: THESE THREE LINES ARE BROKEN WHEN WINNER IS NOT IN BOX 0,0
-
-        var largeTable = document.querySelectorAll(".outer-table")[0].getElementsByTagName("td")[bigI*3+bigJ];
-        largeTable.textContent = "X";
+    if(localWinner = checkWinner(bigBoard[bigI][bigJ])) {
+        var largeTable = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[bigI*3+bigJ];
+        largeTable.textContent = localWinner;
         largeTable.style.fontSize = "100px";
-
-        //var largeTable = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[bigI*3+bigJ];
-        //.style.backgroundColor = "var(--highlight-color)";
-        //console.log("This is the winner: " + checkWinner(bigBoard[bigI][bigJ]));
     }
  }
 
 //returns true if valid move, false if invalid
 function validMove (bigI, bigJ, lili, lilj) {
-    console.log("I: " + bigI + "\nJ: " + bigJ + "\ni: " + lili + "\nj: " + lilj);
+    //game is over
+    if (gameWinner != null) {
+        return false;
+    }
     //space is playable
     if (bigBoard[bigI][bigJ][lili][lilj] == "") {
-        //box is already full
-        if (checkWinner(bigBoard[bigI][bigJ]) != null) {
-            return false;
-        } 
-        //any open space is playable
-        else if (checkWinner(bigBoard[previ][prevj]) != null) {
+        //first move is always good
+        if (previ == -1 && prevj == -1) {
             return true;
         }
-        //must play in restricted box
+        //box is already won
+        else if (checkWinner(bigBoard[bigI][bigJ]) != null) {
+            return false;
+        } 
+        //last sent to completed box, any open space is playable
+        else if (checkWinner(bigBoard[previ][prevj]) != null) {
+            return true;
+        } 
+        //otherwise, must play in restricted box
         else if (bigI == previ && bigJ == prevj) {
             return true;
         }
@@ -89,13 +91,16 @@ function validMove (bigI, bigJ, lili, lilj) {
 }
 
 function nextTurn() {
+    //check for game winner
     var result = checkBigBoard();
+    //update turn label
     if (result != null) {
         document.getElementById("player-turn-label").innerHTML = result + " wins!";
         document.getElementById("player-turn-label").style.display = "block";
         return;
     }
 
+    //toggle turn
     if (playerTurn == "X") {
         playerTurn = "O";
     } else if (playerTurn == "O") {
@@ -115,14 +120,12 @@ function checkWinner(board) {
         winner = board[i][0];
         }
     }
-
     // Vertical
     for (let i = 0; i < 3; i++) {
         if (equals3(board[0][i], board[1][i], board[2][i])) {
         winner = board[0][i];
         }
     }
-
     // Diagonal
     if (equals3(board[0][0], board[1][1], board[2][2])) {
         winner = board[0][0];
@@ -157,20 +160,26 @@ function highlightBoard() {
     const backgroundColor = "var(--background-color)";
     const borderRadius = "15px";
 
-    if (checkWinner(bigBoard[previ][prevj]) != null) {
-        largeTables.forEach(table => {
-            table.style.backgroundColor = highlightColor;
-        });
-        return;
-    }
-
+    //unhighlight all boards
     largeTables.forEach(table => {
         table.style.backgroundColor = backgroundColor;
         table.style.borderRadius = borderRadius;
     });
 
+    //if game is over, don't highlight anything
+    if (gameWinner != null) {
+        return;
+    }
+    //highlight playable board
     const index = previ * 3 + prevj;
     largeTables[index].style.backgroundColor = highlightColor;
+    //if user can go anywhere
+    if (checkWinner(bigBoard[previ][prevj]) != null) {
+        //highlight all boards
+        largeTables.forEach(table => {
+            table.style.backgroundColor = highlightColor;
+        });
+    }
 }
 
 function checkBigBoard() {
@@ -178,15 +187,19 @@ function checkBigBoard() {
         ["","",""],
         ["","",""],
         ["","",""],
-    ]
-    
+    ];
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
             result = checkWinner(bigBoard[i][j])
             if (result != null) {
-                tempBoard[i][j] = result
+                tempBoard[i][j] = result;
             }
         }
     }
-    return checkWinner(tempBoard);
+    gameWinner = checkWinner(tempBoard);
+    //if game is over, unhighlight board
+    if (gameWinner != null) {  
+        highlightBoard();
+    }
+    return gameWinner;
 }
