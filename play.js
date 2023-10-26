@@ -8,30 +8,32 @@ var clickedJ = 0;
 var clickedi = 0;   
 var clickedj = 0;
 var gameWinner = null;
-
-//initialize full board
 let bigBoard = [];
-for (let i = 0; i < 3; i++) {
-    bigBoard[i] = [];
-    for (let j = 0; j < 3; j++) {
-        bigBoard[i][j] = [];
-        for (let k = 0; k < 3; k++) {
-            bigBoard[i][j][k] = [];
-            for (let l = 0; l < 3; l++) {
-                bigBoard[i][j][k][l] = "";
+
+function initialize() {
+    //initialize full board
+    for (let i = 0; i < 3; i++) {
+        bigBoard[i] = [];
+        for (let j = 0; j < 3; j++) {
+            bigBoard[i][j] = [];
+            for (let k = 0; k < 3; k++) {
+                bigBoard[i][j][k] = [];
+                for (let l = 0; l < 3; l++) {
+                    bigBoard[i][j][k][l] = "";
+                }
             }
         }
     }
-}
-
-//table event listeners
-var small_tables = document.querySelectorAll(".inner-table");
-for (var i = 0; i < small_tables.length; i++) {
-    var small_cells = small_tables[i].getElementsByTagName("td");
-    for (var j = 0; j < small_cells.length; j++) {
-        small_cells[j].addEventListener("click", cellClickedEventListener());
-        small_cells[j].addEventListener("mouseover", cellHoverEventListener());
-        small_cells[j].addEventListener("mouseout", cellMouseOutEventListener());
+    
+    //table event listeners
+    var small_tables = document.querySelectorAll(".inner-table");
+    for (var i = 0; i < small_tables.length; i++) {
+        var small_cells = small_tables[i].getElementsByTagName("td");
+        for (var j = 0; j < small_cells.length; j++) {
+            small_cells[j].addEventListener("click", cellClickedEventListener());
+            small_cells[j].addEventListener("mouseover", cellHoverEventListener());
+            small_cells[j].addEventListener("mouseout", cellMouseOutEventListener());
+        }
     }
 }
 
@@ -226,3 +228,5 @@ function checkBigBoard() {
     }
     return gameWinner;
 }
+
+initialize();
