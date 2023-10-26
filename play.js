@@ -23,7 +23,6 @@ for (let i = 0; i < 3; i++) {
     }
 }
 
-
 //table event listeners
 var small_tables = document.querySelectorAll(".inner-table");
 for (var i = 0; i < small_tables.length; i++) {
@@ -55,22 +54,48 @@ function updateBoard(bigI, bigJ, lili, lilj) {
     prevj = lilj;
     prevI = bigI;
     prevJ = bigJ;
+    if(checkWinner(bigBoard[bigI][bigJ])) {
+        //TODO: THESE THREE LINES ARE BROKEN WHEN WINNER IS NOT IN BOX 0,0
+
+        var largeTable = document.querySelectorAll(".outer-table")[0].getElementsByTagName("td")[bigI*3+bigJ];
+        largeTable.textContent = "X";
+        largeTable.style.fontSize = "100px";
+
+        //var largeTable = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[bigI*3+bigJ];
+        //.style.backgroundColor = "var(--highlight-color)";
+        //console.log("This is the winner: " + checkWinner(bigBoard[bigI][bigJ]));
+    }
  }
 
 //returns true if valid move, false if invalid
 function validMove (bigI, bigJ, lili, lilj) {
+    console.log("I: " + bigI + "\nJ: " + bigJ + "\ni: " + lili + "\nj: " + lilj);
+    //space is playable
     if (bigBoard[bigI][bigJ][lili][lilj] == "") {
-        if (checkWinner(bigBoard[previ][prevj]) != null) {
+        //box is already full
+        if (checkWinner(bigBoard[bigI][bigJ]) != null) {
+            return false;
+        } 
+        //any open space is playable
+        else if (checkWinner(bigBoard[previ][prevj]) != null) {
             return true;
-        } else if (bigI == previ && bigJ == prevj) {
+        }
+        //must play in restricted box
+        else if (bigI == previ && bigJ == prevj) {
             return true;
         }
     }
-    //console.log("This is cell I: " + bigI + " J: " + bigJ + " i: " + lili + " j: " + lilj + " and it has already been played");
     return false;
 }
 
 function nextTurn() {
+    var result = checkBigBoard();
+    if (result != null) {
+        document.getElementById("player-turn-label").innerHTML = result + " wins!";
+        document.getElementById("player-turn-label").style.display = "block";
+        return;
+    }
+
     if (playerTurn == "X") {
         playerTurn = "O";
     } else if (playerTurn == "O") {
@@ -117,8 +142,8 @@ function equals3(a, b, c) {
 
 function is_full(board) {
     for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; i++) {
-            if (board[i][j] == '') {
+        for (let j = 0; j < 3; j++) {
+            if (board[i][j] === '') {
                 return false;
             }
         }
@@ -127,30 +152,41 @@ function is_full(board) {
 }
 
 function highlightBoard() {
-    var largeTables = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board");
-    for (var i = 0; i < largeTables.length; i++) {
-        largeTables[i].style.backgroundColor = "var(--background-color)";
-    }
-    
-    console.log ("previ: " + previ + " prevj: " + prevj);
+    const largeTables = document.querySelectorAll(".outer-table .big-board");
+    const highlightColor = "var(--highlight-color)";
+    const backgroundColor = "var(--background-color)";
+    const borderRadius = "15px";
 
-    if (previ == 0 && prevj == 0) { //top left
-        largeTables[0].style.backgroundColor = "var(--highlight-color)";
-    } else if (previ == 0 && prevj == 1) { //top middle
-        largeTables[1].style.backgroundColor = "var(--highlight-color)";
-    } else if (previ == 0 && prevj == 2) { //top right
-        largeTables[2].style.backgroundColor = "var(--highlight-color)";
-    } else if (previ == 1 && prevj == 0) { //middle left
-        largeTables[3].style.backgroundColor = "var(--highlight-color)";
-    } else if (previ == 1 && prevj == 1) { //middle middle
-        largeTables[4].style.backgroundColor = "var(--highlight-color)";
-    } else if (previ == 1 && prevj == 2) { //middle right
-        largeTables[5].style.backgroundColor = "var(--highlight-color)";
-    } else if (previ == 2 && prevj == 0) { //bottom left
-        largeTables[6].style.backgroundColor = "var(--highlight-color)";
-    } else if (previ == 2 && prevj == 1) { //bottom middle
-        largeTables[7].style.backgroundColor = "var(--highlight-color)";
-    } else if (previ == 2 && prevj == 2) { //bottom right
-        largeTables[8].style.backgroundColor = "var(--highlight-color)";
+    if (checkWinner(bigBoard[previ][prevj]) != null) {
+        largeTables.forEach(table => {
+            table.style.backgroundColor = highlightColor;
+        });
+        return;
     }
+
+    largeTables.forEach(table => {
+        table.style.backgroundColor = backgroundColor;
+        table.style.borderRadius = borderRadius;
+    });
+
+    const index = previ * 3 + prevj;
+    largeTables[index].style.backgroundColor = highlightColor;
+}
+
+function checkBigBoard() {
+    var tempBoard = [
+        ["","",""],
+        ["","",""],
+        ["","",""],
+    ]
+    
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            result = checkWinner(bigBoard[i][j])
+            if (result != null) {
+                tempBoard[i][j] = result
+            }
+        }
+    }
+    return checkWinner(tempBoard);
 }
