@@ -29,11 +29,13 @@ var small_tables = document.querySelectorAll(".inner-table");
 for (var i = 0; i < small_tables.length; i++) {
     var small_cells = small_tables[i].getElementsByTagName("td");
     for (var j = 0; j < small_cells.length; j++) {
-        small_cells[j].addEventListener("click", smallCellEventListener());
+        small_cells[j].addEventListener("click", cellClickedEventListener());
+        small_cells[j].addEventListener("mouseover", cellHoverEventListener());
+        small_cells[j].addEventListener("mouseout", cellMouseOutEventListener());
     }
 }
 
-function smallCellEventListener() {
+function cellClickedEventListener() {
     return function() {
         clickedI = this.parentNode.parentNode.parentNode.parentNode.parentNode.rowIndex;
         clickedJ = this.parentNode.parentNode.parentNode.parentNode.cellIndex;
@@ -42,10 +44,33 @@ function smallCellEventListener() {
         //console.log("I: " + clickedI + "\nJ: " + clickedJ + "\ni: " + clickedi + "\nj: " + clickedj);
         if (validMove(clickedI, clickedJ, clickedi, clickedj)) {
             this.textContent = playerTurn;
+            this.style.color = "var(--text-color)";
             updateBoard(clickedI, clickedJ, clickedi, clickedj);
             nextTurn();
         }
         return;
+    }
+}
+
+function cellHoverEventListener() {
+    return function() {
+        //this event listener is not added to larger boards that have already been won.
+        if (validMove(this.parentNode.parentNode.parentNode.parentNode.parentNode.rowIndex, this.parentNode.parentNode.parentNode.parentNode.cellIndex, this.parentNode.rowIndex, this.cellIndex)) {
+            this.textContent = playerTurn;
+            this.style.color = "lightgray";
+            this.style.cursor = "pointer";
+        } else {
+            this.style.cursor = "not-allowed";
+        }
+    }
+}
+
+function cellMouseOutEventListener() {
+    return function() {
+        if (this.style.color == "lightgray") {
+            // remove the text content only if the cell is not already filled with a player's move
+            this.textContent = "";
+        }
     }
 }
 
@@ -62,7 +87,6 @@ function updateBoard(bigI, bigJ, lili, lilj) {
     }
  }
 
-//returns true if valid move, false if invalid
 function validMove (bigI, bigJ, lili, lilj) {
     //game is over
     if (gameWinner != null) {
@@ -109,7 +133,6 @@ function nextTurn() {
     highlightBoard();
     document.getElementById("player-turn-label").innerHTML = playerTurn + "'s turn";
 }
-
 
 function checkWinner(board) {
     let winner = null;
