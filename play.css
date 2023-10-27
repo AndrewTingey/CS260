@@ -54,6 +54,16 @@ main h1, p {
     font-family: sans-serif;
 }
 
+.chat-box {
+    width: 90%;
+    max-width: 600px;
+    min-height: fit-content;
+    margin: auto;
+    background-color: var(--textbox-color);
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
 @media screen and (max-width: 600px) {
     .outer-table {
         height: 100vw;
