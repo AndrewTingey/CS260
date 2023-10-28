@@ -48,3 +48,12 @@ For this delliverable I made my website prettier with CSS and added bootstrap
 - **Bootstrap** - I mostly used bootstrap in the login screen, however admittedly all the links are fake links and do anything yet
 - **Tables** - I made the table on the game history such that when you hover over a element it highlights the whole row
 - **CSS** - On the play screen i added horizontal and vertical line elements in css to be able to use them on every other box and create what looks like a tic tac toe grid.
+
+## JavaScript Deliverable
+
+For this deliverable I implemented by JavaScript so that the application works for a single user. I also added placeholders for future technology.
+
+- **Login** - Instead of username/password, I chose just a username because there's not really senstiive information to protect from one user to another.
+- **Database** - Displayed the game history log. Right now, this is retrieved from local storage, but it will be replaced with the database data later.
+- **WebSocket** - I added a chat box and history. Right now its lame because nobody would use it in pass-n-play mode, but in the future it will only be visible when playing online and connect via websocket to the other user. 
+- **Application Logic** - The ultimate tic-tac-toe game works for a single screen, if one person were to pass-n-play with a friend. In the future, I plan to keep this capability, but add an option to play a computer and play against friends online.
