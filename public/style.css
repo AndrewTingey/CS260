@@ -56,12 +56,13 @@ nav a:hover {
 }
 
 header {
-    flex: 0 0 125px;
+    flex: 0 0 135px;
     background-color: var(--background-color);
+    padding: 10px;
 }
   
 main {
-    flex: 1 0 calc(100vh - 165px);
+    flex: 1 0 calc(100vh - 175px);
     display: flex; 
     flex-direction: column;
     align-items: center;
