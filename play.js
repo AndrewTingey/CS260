@@ -1,3 +1,7 @@
+import { getCPUMove } from './minimax.js';
+
+const VS_CPU = true;
+ 
 var playerTurn = "X";
 var prevI = -1;
 var prevJ = -1;
@@ -37,6 +41,7 @@ function initialize() {
     }
 }
 
+
 function cellClickedEventListener() {
     return function() {
         clickedI = this.parentNode.parentNode.parentNode.parentNode.parentNode.rowIndex;
@@ -45,9 +50,7 @@ function cellClickedEventListener() {
         clickedj = this.cellIndex;
         //console.log("I: " + clickedI + "\nJ: " + clickedJ + "\ni: " + clickedi + "\nj: " + clickedj);
         if (validMove(clickedI, clickedJ, clickedi, clickedj)) {
-            this.textContent = playerTurn;
-            this.style.color = "var(--text-color)";
-            updateBoard(clickedI, clickedJ, clickedi, clickedj);
+            updateBoard(clickedI, clickedJ, clickedi, clickedj);    
             nextTurn();
         }
         return;
@@ -77,12 +80,16 @@ function cellMouseOutEventListener() {
 }
 
 function updateBoard(bigI, bigJ, lili, lilj) {
+    var cellContext = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[bigI*3+bigJ].getElementsByTagName("td")[lili*3+lilj];
+    cellContext.textContent = playerTurn;
+    cellContext.style.color = "var(--text-color)";
     bigBoard[bigI][bigJ][lili][lilj] = playerTurn;
     previ = lili;
     prevj = lilj;
     prevI = bigI;
     prevJ = bigJ;
-    if(localWinner = checkWinner(bigBoard[bigI][bigJ])) {
+    let localWinner = checkWinner(bigBoard[bigI][bigJ]);
+    if(localWinner != null) {
         var largeTable = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[bigI*3+bigJ];
         largeTable.textContent = localWinner;
         largeTable.style.fontSize = "100px";
@@ -127,13 +134,33 @@ function nextTurn() {
     }
 
     //toggle turn
-    if (playerTurn == "X") {
+    if (!VS_CPU) {
+        if (playerTurn == "X") {
+            playerTurn = "O";
+        } else if (playerTurn == "O") {
+            playerTurn = "X";
+        }
+
+        document.getElementById("player-turn-label").innerHTML = playerTurn + "'s turn";
+        highlightBoard();
+    } else {
+        //get CPU move
         playerTurn = "O";
-    } else if (playerTurn == "O") {
-        playerTurn = "X";
+        document.getElementById("player-turn-label").innerHTML = "CPU's turn";
+        highlightBoard();
+        var move;
+        //timeout isnt really needed
+        //but it makes it look like the CPU is thinking
+        setTimeout(function() {
+            move = getCPUMove();
+            updateBoard(move.I, move.J, move.i, move.j);
+            document.getElementById("player-turn-label").innerHTML = "X's turn";
+            playerTurn = "X";
+            highlightBoard();
+        }, 1000);
     }
-    highlightBoard();
-    document.getElementById("player-turn-label").innerHTML = playerTurn + "'s turn";
+
+    
 }
 
 function checkWinner(board) {
@@ -215,7 +242,7 @@ function checkBigBoard() {
     ];
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
-            result = checkWinner(bigBoard[i][j])
+            let result = checkWinner(bigBoard[i][j])
             if (result != null) {
                 tempBoard[i][j] = result;
             }
@@ -230,3 +257,7 @@ function checkBigBoard() {
 }
 
 initialize();
+
+export function isValidMove(move) {
+    return validMove(move.I, move.J, move.i, move.j);
+}

@@ -27,7 +27,14 @@
         <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
           <menu>
             <a href="index.html">Home</a>
-            <a href="play.html" class="active">Play</a>
+            <div class="dropdown">
+              <a href="play.html" class="active">Play</a>
+              <div class="dropdown-content">
+                <a href="play.html">Play Online</a>
+                <a href="play.html">Play vs AI</a>
+                <a href="play.html">Play vs Player</a>
+              </div>
+            </div>
             <a href="gamehistory.html">Game Log</a>
             <a href="about.html">About</a>
           </menu>
@@ -247,7 +254,8 @@
     </footer>
 
     <script src="main.js"></script>
-    <script src="play.js"></script>
+    <script type="module" src="play.js"></script>
+    <script type="module" src="minimax.js"></script>
     <script src="chat.js"></script>
   </body>
 </html>
