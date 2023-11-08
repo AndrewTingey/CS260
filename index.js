@@ -2,6 +2,9 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
 
+// The service port. In production the front-end code is statically hosted by the service on the same port.
+const port = process.argv.length > 2 ? process.argv[2] : 3000;
+
 // Third party middleware - Cookies
 app.use(cookieParser());
 
@@ -23,14 +26,30 @@ app.use((req, res, next) => {
 // Built in middleware - Static file hosting
 app.use(express.static('public'));
 
-// Routing middleware
-app.get('/store/:storeName', (req, res) => {
-  res.send({name: req.params.storeName});
+// Router for service endpoints
+var apiRouter = express.Router();
+app.use('/api', apiRouter);
+
+// Get game history log
+apiRouter.get('/gameHistory', (req, res) => {
+  res.send(gameHistory);
 });
 
-app.put('/st*/:storeName', (req, res) => res.send({update: req.params.storeName}));
+// Post game history log
+apiRouter.post('/gameHistory', (req, res) => {
+  gameHistory = addGameToHistory(req.body);
+  res.send(gameHistory);
+});
 
-app.delete(/\/store\/(.+)/, (req, res) => res.send({delete: req.params[0]}));
+// Return the application's index.html file
+app.use((req, res) => {
+  res.sendFile('index.html', {root: 'public'});
+});
+
+// Listening to a network port
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
 
 // Error middleware
 app.get('/error', (req, res, next) => {
@@ -41,8 +60,9 @@ app.use(function (err, req, res, next) {
   res.status(500).send({type: err.name, message: err.message});
 });
 
-// Listening to a network port
-const port = 8080;
-app.listen(port, function () {
-  console.log(`Listening on port ${port}`);
-});
+// Data
+let gameHistory = [];
+function addGameToHistory(game) {
+  gameHistory.push(game);
+  return gameHistory;
+}
