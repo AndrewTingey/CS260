@@ -37,6 +37,7 @@ apiRouter.get('/gameHistory', (req, res) => {
 
 // Post game history log
 apiRouter.post('/gameHistory', (req, res) => {
+  //console.log("Game history saved body: \n\t" + req.body);
   gameHistory = addGameToHistory(req.body, gameHistory);
   res.send(gameHistory);
 });
