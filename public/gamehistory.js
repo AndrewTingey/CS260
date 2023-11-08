@@ -1,37 +1,45 @@
-function loadGames() {
+async function loadGames() {
     let gameHistory = [];
-    const gameHistoryText = localStorage.getItem('gameHistory');
-    if (gameHistoryText) {
-        gameHistory = JSON.parse(gameHistoryText);
-    }
+    try {
+        const response = await fetch('/api/gameHistory');
+        gameHistory = await response.json();
 
-    const gameHistoryElement = document.querySelector("#game-history");
-
-    if (gameHistory.length == 0) {
-        gameHistoryElement.innerHTML = "No games played yet.";
-    } else {
-
-        //TODO implement this 
-        gameHistoryElement.innerHTML = "";
-        for (let i = 0; i < gameHistory.length; i++) {
-            const game = gameHistory[i];
-            const gameElement = document.createElement("tr");
-
-            const dateTdEl = document.createElement("td");
-            const player2TdEl = document.createElement("td");
-            const winnerTdEl = document.createElement("td");
-
-            dateTdEl.innerHTML = game.date;
-            player2TdEl.innerHTML = game.player2;
-            winnerTdEl.innerHTML = game.winner;
-
-            gameElement.appendChild(game.date);
-            gameElement.appendChild(game.player2);
-            gameElement.appendChild(game.winner);
-
-            gameHistoryElement.appendChild(gameElement);
+        localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+    } catch {
+        console.log('Could not load game history');
+        const gameHistoryText = localStorage.getItem('gameHistory');
+        if (gameHistoryText) {
+            gameHistory = JSON.parse(gameHistoryText);
         }
     }
+
+    showGames(gameHistory);
+}
+
+function showGames(gameHistory) {
+    const gameHistoryTable = document.getElementById('gameHistoryTable');
+
+    console.log(gameHistory);
+
+    //remove null items
+    gameHistory = gameHistory.filter(game => game !== null);
+
+    console.log(gameHistory);
+
+    if (gameHistory.length === 0) {
+        gameHistoryTable.innerHTML = '<tr><td colspan="3">No games played</td></tr>';
+        return;
+    }
+    
+    gameHistory.forEach(game => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${game.date}</td>
+            <td>${game.versus}</td>
+            <td>${game.winner}</td>
+        `;
+        gameHistoryTable.appendChild(row);
+    });
 }
 
 loadGames();

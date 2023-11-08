@@ -37,7 +37,7 @@ apiRouter.get('/gameHistory', (req, res) => {
 
 // Post game history log
 apiRouter.post('/gameHistory', (req, res) => {
-  gameHistory = addGameToHistory(req.body);
+  gameHistory = addGameToHistory(req.body, gameHistory);
   res.send(gameHistory);
 });
 
@@ -62,7 +62,7 @@ app.use(function (err, req, res, next) {
 
 // Data
 let gameHistory = [];
-function addGameToHistory(game) {
+function addGameToHistory(game, gameHistory) {
   gameHistory.push(game);
   return gameHistory;
 }

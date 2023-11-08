@@ -1,6 +1,6 @@
 import { getCPUMove } from './minimax.js';
 
-const VS_CPU = true;
+const VS_CPU = false;
  
 var playerTurn = "X";
 var prevI = -1;
@@ -123,13 +123,17 @@ function validMove (bigI, bigJ, lili, lilj) {
     return false;
 }
 
-function nextTurn() {
+async function nextTurn() {
     //check for game winner
     var result = checkBigBoard();
     //update turn label
     if (result != null) {
+        //theres a winner!
         document.getElementById("player-turn-label").innerHTML = result + " wins!";
         document.getElementById("player-turn-label").style.display = "block";
+
+        //update game history
+        await saveGameHistory(result);
         return;
     }
 
@@ -254,6 +258,34 @@ function checkBigBoard() {
         highlightBoard();
     }
     return gameWinner;
+}
+
+async function saveGameHistory(winner) {
+    const game = {
+        date: new Date(),
+        versus: VS_CPU ? 'CPU' : 'Player',
+        winner: winner,
+    };
+    try {
+        const response = await fetch('/api/gameHistory', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(game),
+        });
+        const data = await response.json();
+        localStorage.setItem('gameHistory', JSON.stringify(data));
+    } catch (error) {
+        this.updateGamesLocal(game);
+        console.error(error);
+    }
+}
+
+function updateGamesLocal(game) {
+    const gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
+    gameHistory.push(game);
+    localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
 }
 
 initialize();
