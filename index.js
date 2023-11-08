@@ -5,6 +5,8 @@ const app = express();
 // The service port. In production the front-end code is statically hosted by the service on the same port.
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
+app.use(express.json());
+
 // Third party middleware - Cookies
 app.use(cookieParser());
 
@@ -37,7 +39,9 @@ apiRouter.get('/gameHistory', (req, res) => {
 
 // Post game history log
 apiRouter.post('/gameHistory', (req, res) => {
-  //console.log("Game history saved body: \n\t" + req.body);
+  console.log("Game history saved body: \n\t" + req.body);
+  console.log("REQUEST: \n\t");
+  //console.log(JSON.stringify(req));
   gameHistory = addGameToHistory(req.body, gameHistory);
   res.send(gameHistory);
 });
@@ -63,7 +67,7 @@ app.use(function (err, req, res, next) {
 
 // Data
 let gameHistory = [];
-function addGameToHistory(game, gameHistory) {
-  gameHistory.push(game);
+function addGameToHistory(game, gameHistorySaved) {
+  gameHistorySaved.push(game);
   return gameHistory;
 }

@@ -1,6 +1,6 @@
 import { getCPUMove } from './minimax.js';
 
-const VS_CPU = false;
+const VS_CPU = true;
  
 var playerTurn = "X";
 var prevI = -1;
@@ -262,10 +262,11 @@ function checkBigBoard() {
 
 async function saveGameHistory(winner) {
     const game = {
-        date: new Date(),
-        versus: VS_CPU ? 'CPU' : 'Player',
-        winner: winner,
+        date: new Date().toDateString(),
+        versus: VS_CPU ? 'Computer' : 'Local Multiplayer',
+        winner: winner + "'s"
     };
+    console.log("Game to be saved: \n\t" + JSON.stringify(game));
     try {
         const response = await fetch('/api/gameHistory', {
             method: 'POST',
@@ -275,6 +276,7 @@ async function saveGameHistory(winner) {
             body: JSON.stringify(game),
         });
         const data = await response.json();
+        console.log("Data recieved: \n\t" + data);
         localStorage.setItem('gameHistory', JSON.stringify(data));
     } catch (error) {
         this.updateGamesLocal(game);
