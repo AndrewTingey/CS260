@@ -15,6 +15,21 @@
     background: var(--tertiary-color);
     color: var(--background-color);
 }
+
+#joke {
+  display: flex;
+  justify-content: center;
+  margin-top: 1em;
+}
+
+.joke-box {
+    width: 70%;
+    margin-top: 1em auto;
+    padding: 1em;
+    border-radius: 10px;
+    background: var(--tertiary-color);
+    color: var(--background-color);
+}
   
   .quote {
     font-style: italic;

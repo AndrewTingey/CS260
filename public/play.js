@@ -1,6 +1,6 @@
 import { getCPUMove } from './minimax.js';
 
-const VS_CPU = true;
+const VS_CPU = false;
  
 var playerTurn = "X";
 var prevI = -1;
