@@ -1,7 +1,5 @@
 import {gameBoard} from "./play.js";
 
-
-
 export function getCPUMove() {
     let move;
     move = {I: 0, J: 0, i: 0, j: 0};
@@ -15,5 +13,4 @@ export function getCPUMove() {
         move.j = Math.floor(Math.random() * 3);
     } while (!gameBoard.validMove(move.I, move.J, move.i, move.j));
     return move;
-
 }

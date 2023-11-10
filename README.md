@@ -57,3 +57,13 @@ For this deliverable I implemented by JavaScript so that the application works f
 - **Database** - Displayed the game history log. Right now, this is retrieved from local storage, but it will be replaced with the database data later.
 - **WebSocket** - I added a chat box and history. Right now its lame because nobody would use it in pass-n-play mode, but in the future it will only be visible when playing online and connect via websocket to the other user. 
 - **Application Logic** - The ultimate tic-tac-toe game works for a single screen, if one person were to pass-n-play with a friend. In the future, I plan to keep this capability, but add an option to play a computer and play against friends online.
+
+## Service Deliverable
+
+For this deliverable I added backend endpoints that recieve game winner and displays it on the game log.
+
+- **Node.js/Express HTTP service** - done!
+- **Static middleware for frontend** - done!
+- **Calls to third party endpoints** - The about page gets a chuck norris joke on click using a third party api call
+- **Backend service endpoints** - Get and Post services were created for when games end, to 
+- **Frontend calls service endpoints** - I did this using the fetch function.
