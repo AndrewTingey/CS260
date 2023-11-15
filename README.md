@@ -1,5 +1,7 @@
 # Ultimate Tic Tac Toe
 
+The most recent working model of this app will be published to startup.andrewt.click
+
 ## Elevator Pitch
 
 I've always loved playing a pass-n-play scratch game like tic-tac-toe on a peice of paper, but the simple 3x3 grid was always too simple. There are only around 126 unique boards that can be played. My friends and I decided to add another layer to the game to make it more complex. a 3x3x3 board is much more intricate and allows for much more thinking when deciding where to go. We called it ultimate tic-tac-toe. But now nobody uses paper because in 2023 everything is online. I want to make a website that i can still play my friends this simple game either online or sitting next to them as local multiplayer. I also want to implement the classic mini-max algorithm that is used in a classic AI CPU tic-tac-toe game and see if I can beat it. 
