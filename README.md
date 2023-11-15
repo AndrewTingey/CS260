@@ -1,6 +1,6 @@
 # Ultimate Tic Tac Toe
 
-The most recent working model of this app will be published to startup.andrewt.click
+The most recent working model of this app will be published to https://startup.andrewt.click
 
 ## Elevator Pitch
 
