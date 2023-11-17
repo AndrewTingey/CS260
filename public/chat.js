@@ -10,14 +10,24 @@ sendButton.addEventListener('click', (event) => {
     // Get the user's message from the chat input field
     const message = chatInput.value;
 
-    // Create a new chat message element
-    const chatMessage = document.createElement('li');
-    chatMessage.innerHTML = `<span class="username">You:</span> ${message}`;
-    const messages = document.querySelectorAll('.chat-message');
+    addMessage(message, 'You');
     
-    // Add the chat message to the chat history
-    chatHistory.appendChild(chatMessage);
+    //this is a joke for halloween
+    if (chatHistory.children.length === 2) {
+        addMessage("BOO!", 'Ghost');
+    }
 
     // Clear the chat input field
     chatInput.value = '';
 });
+
+function addMessage(message, username) {
+    const chatMessage = document.createElement('li');
+    if (username === 'You') {
+        chatMessage.innerHTML = `<span class="username" style="color: var(--primary-color)">You:</span> ${message}`;
+    } else {
+        chatMessage.innerHTML = `<span class="username" style="color: var(--secondary-color)">${username}:</span> ${message}`;
+    }
+    chatHistory.appendChild(chatMessage);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+}

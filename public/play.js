@@ -101,6 +101,11 @@ class GameBoard {
         return false;
     }
 
+    //used for minimax, not for user input
+    makeMove(bigI, bigJ, lili, lilj, player) {
+        this.bigBoard[bigI][bigJ][lili][lilj] = player;
+    }
+
     async nextTurn() {
         //check for game winner
         var result = this.checkBigBoard();
@@ -347,4 +352,8 @@ setOpponent();
 
 export {
     gameBoard
+}
+
+function setOnline() {
+    console.log("setOnline");
 }

@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
+const DB = require('./database.js');
 
 // The service port. In production the front-end code is statically hosted by the service on the same port.
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
@@ -33,17 +34,20 @@ var apiRouter = express.Router();
 app.use('/api', apiRouter);
 
 // Get game history log
-apiRouter.get('/gameHistory', (req, res) => {
-  res.send(gameHistory);
+apiRouter.get('/gameHistory', async (req, res) => {
+  console.log("Game history requested");
+  console.log("Cookie: \n\t", req.cookies.body);
+  const dbGameHistory = await DB.getGameHistory(req.cookies);
+  res.send(dbGameHistory);
 });
 
 // Post game history log
-apiRouter.post('/gameHistory', (req, res) => {
-  console.log("Game history saved body: \n\t" + req.body);
-  console.log("REQUEST: \n\t");
-  //console.log(JSON.stringify(req));
-  gameHistory = addGameToHistory(req.body, gameHistory);
-  res.send(gameHistory);
+apiRouter.post('/gameHistory', async (req, res) => {
+  console.log("Game history saved body: \n\t", req.body);
+  console.log("Cookie: \n\t", req.cookies);
+  const dbGameHistory = await DB.addToGameHistory(req.cookies, req.body);
+  //gameHistory = addGameToHistory(req.body, gameHistory);
+  res.send(dbGameHistory);
 });
 
 // Return the application's index.html file

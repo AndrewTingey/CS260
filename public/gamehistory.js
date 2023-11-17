@@ -19,12 +19,10 @@ async function loadGames() {
 function showGames(gameHistory) {
     const gameHistoryTable = document.getElementById('gameHistoryTable');
 
-    console.log(gameHistory);
+    console.log("Game History to display", gameHistory);
 
     //remove null items
     gameHistory = gameHistory.filter(game => game !== null);
-
-    console.log(gameHistory);
 
     if (gameHistory.length === 0) {
         gameHistoryTable.innerHTML = '<tr><td colspan="3">No games played</td></tr>';
