@@ -1,7 +1,7 @@
 {
   "name": "cs260",
   "version": "1.0.0",
-  "description": "## Elevator Pitch",
+  "description": "The most recent working model of this app will be published to https://startup.andrewt.click",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,8 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cookie-parser": "^1.4.6",
     "express": "^4.18.2",
-    "mongodb": "^6.3.0"
+    "mongo": "^0.1.0"
   }
 }

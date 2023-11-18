@@ -7,6 +7,7 @@ async function loadGames() {
             gameHistory.push(responseJson[i].game);
         }
         // gameHistory = await response.json();
+        console.log('Game history loaded', gameHistory);
 
         localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
     } catch {

@@ -35,24 +35,24 @@ app.use('/api', apiRouter);
 
 // Get game history log
 apiRouter.get('/gameHistory', async (req, res) => {
-  console.log("Game history requested");
-  console.log("Cookie: \n\t", req.cookies.body);
+  // console.log("Game history requested");
+  // console.log("Cookie: \n\t", req.cookies.body);
   const dbGameHistory = await DB.getGameHistory(req.cookies);
   res.send(dbGameHistory);
 });
 
 // Post game history log
 apiRouter.post('/gameHistory', async (req, res) => {
-  console.log("Game history saved body: \n\t", req.body);
-  console.log("Cookie: \n\t", req.cookies);
+  // console.log("Game history saved body: \n\t", req.body);
+  // console.log("Cookie: \n\t", req.cookies);
   const dbGameHistory = await DB.addToGameHistory(req.cookies, req.body);
   res.send(dbGameHistory);
 });
 
 //clear game history log
 apiRouter.delete('/gameHistory', async (req, res) => {
-  console.log("Game history cleared");
-  console.log("Cookie: \n\t", req.cookies);
+  // console.log("Game history cleared");
+  // console.log("Cookie: \n\t", req.cookies);
   const dbGameHistory = await DB.clearGameHistory(req.cookies);
   res.send(dbGameHistory);
 });
