@@ -69,3 +69,11 @@ For this deliverable I added backend endpoints that recieve game winner and disp
 - **Calls to third party endpoints** - The about page gets a chuck norris joke on click using a third party api call
 - **Backend service endpoints** - Get and Post services were created for when games end, to 
 - **Frontend calls service endpoints** - I did this using the fetch function.
+
+## DB deliverable
+
+For this deliverable I stored the game history in the database.
+
+- **MongoDB Atlas database created** - done!
+- **Endpoints for data** - My stubbed out endpoints now process the data and send it to Mongo.
+- **Stores data in MongoDB** - done!
