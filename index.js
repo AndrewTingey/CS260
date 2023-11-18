@@ -46,7 +46,14 @@ apiRouter.post('/gameHistory', async (req, res) => {
   console.log("Game history saved body: \n\t", req.body);
   console.log("Cookie: \n\t", req.cookies);
   const dbGameHistory = await DB.addToGameHistory(req.cookies, req.body);
-  //gameHistory = addGameToHistory(req.body, gameHistory);
+  res.send(dbGameHistory);
+});
+
+//clear game history log
+apiRouter.delete('/gameHistory', async (req, res) => {
+  console.log("Game history cleared");
+  console.log("Cookie: \n\t", req.cookies);
+  const dbGameHistory = await DB.clearGameHistory(req.cookies);
   res.send(dbGameHistory);
 });
 

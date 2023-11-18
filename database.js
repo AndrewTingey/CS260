@@ -17,16 +17,26 @@ const gameCollection = db.collection('gameLog');
 
 async function addToGameHistory(user, game) {
   console.log(`Adding game to history for ${user}`);
-  const result = await gameCollection.insertOne({ user, game });
+  const result = await gameCollection.insertOne({ user: user, game: game });
   //const result = await gameCollection.insertOne(game);
   return result;
 }
-function getGameHistory(user) {
+async function getGameHistory(user) {
   //TODO - filter by user
-  const query = {  };
+  const query = { user };
   const options = { limit: 100 };
-  const cursor = gameCollection.find(query, options);
-  return cursor.toArray();
+  const cursor = await gameCollection.find(query, options);
+  console.log(`Getting game history for ${user}`);
+  const gameHistory = await cursor.toArray();
+  console.log(`Game history:\n\t`, gameHistory);
+  return gameHistory;
 }
 
-module.exports = { addToGameHistory, getGameHistory };
+//TODO - this doesnt have functionality yet
+async function clearGameHistory(user) {
+  console.log(`Clearing game history for ${user}`);
+  const result = await gameCollection.deleteMany({ user });
+  return result;
+}
+
+module.exports = { addToGameHistory, getGameHistory, clearGameHistory };
