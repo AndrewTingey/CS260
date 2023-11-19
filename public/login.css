@@ -1,0 +1,23 @@
+#email {
+  width: 100%;
+  margin-right: 10px;
+}
+
+#password {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.login-buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+#sign-in {
+    margin-right: 10px;
+}
+
+#register {
+    margin-left: 10px;
+}

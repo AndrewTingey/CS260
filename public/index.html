@@ -39,11 +39,17 @@
     <main class="login">
       <h1>Welcome</h1>
       <p>Login to play</p>
-        <form action="play.html">
+        <div id="loginControls">
           <!-- Email input -->
           <div>
-          <input id="username" type="text" placeholder="Your name here" style="width: 60%; margin-right: 10px;"/>
-            <button type="submit" class="btn btn-primary" onclick="login()">Sign in</button>
+            <input id="username" type="text" placeholder="Email"/>
+          </div>
+          <div>
+            <input id="password" type="password" placeholder="Password"/>
+          </div>
+          <div class="login-buttons">
+            <button id="signIn" type="submit" class="btn btn-primary" onclick="login()">Sign in</button>
+            <button id="register" type="submit" class="btn btn-secondary" onclick="register()">Register</button>
           </div>
         </form>
     </main>
