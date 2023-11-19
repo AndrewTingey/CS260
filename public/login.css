@@ -10,8 +10,13 @@
 
 .login-buttons {
     margin-top: 10px;
-    display: flex;
+    display: block;
     justify-content: center;
+    justify-items: center;
+}
+
+.login-inputs {
+  justify-content: center;
 }
 
 #sign-in {

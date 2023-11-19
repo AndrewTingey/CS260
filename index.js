@@ -94,9 +94,7 @@ app.get('/cookie', (req, res, next) => {
 
 // Creating your own middleware - logging
 app.use((req, res, next) => {
-
-  console.log("REQ URL: \n", req.originalUrl);
-  console.log("REQ BODY: \n", req.body);
+  console.log(req.originalUrl);
   next();
 });
 

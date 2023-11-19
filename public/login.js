@@ -1,3 +1,17 @@
+(async () => {
+  const username = localStorage.getItem('username');
+  console.log("Username: \n\t", username);
+  if (username) {
+    document.querySelector('#playerName').textContent = username;
+    setDisplay('loginControls', 'none');
+    setDisplay('playControls', 'block');
+  } else {
+    setDisplay('loginControls', 'block');
+    setDisplay('playControls', 'none');
+  }
+})();
+
+
 async function login() {
   loginOrRegister("/api/auth/login");
 }
@@ -29,6 +43,10 @@ async function loginOrRegister(endpoint) {
   }
 }
 
+function play() {
+  window.location.href = 'play.html';
+}
+
 function logout() {
   localStorage.removeItem("username");
   fetch("/api/auth/logout", {
@@ -44,5 +62,9 @@ async function getUser(email) {
   return null;
 }
 
-//not inserted from simon/login.js
-//play(), setDisplay(), ()=> function at top
+function setDisplay(controlId, display) {
+  const playControlEl = document.querySelector(`#${controlId}`);
+  if (playControlEl) {
+    playControlEl.style.display = display;
+  }
+}

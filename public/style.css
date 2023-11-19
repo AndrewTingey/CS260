@@ -70,10 +70,6 @@ main {
     background-color: var(--background-color);
 }
 
-.login {
-  justify-content: center;
-}
-
 footer {
     flex: 0 0 40px;
     justify-content: flex-end;
