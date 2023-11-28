@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const app = express();
 const DB = require('./database.js');
+const {WebSocketServer} = require('ws');
 
 const authCookieName = 'token';
 
@@ -129,11 +130,6 @@ function setAuthCookie(res, authToken) {
   });
 }
 
-// Listening to a network port
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-});
-
 // Error middleware
 app.get('/error', (req, res, next) => {
   throw new Error('Trouble in river city');
@@ -142,3 +138,65 @@ app.get('/error', (req, res, next) => {
 app.use(function (err, req, res, next) {
   res.status(500).send({type: err.name, message: err.message});
 });
+
+// Listening to a network port
+server = app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
+
+// Websocket server
+const wss = new WebSocketServer({ noServer: true });
+
+// Handle websocket connections
+server.on('upgrade', (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, function done(ws) {
+    wss.emit('connection', ws, request);
+  });
+});
+
+// keep track of all connections
+let connections = [];
+
+wss.on('connection', (ws) => {
+  const connection = { 
+    id: connections.length + 1,
+    alive: true,
+    ws: ws
+  };
+  connections.push(connection);
+
+  //forward message to everyone except sender
+  ws.on('message', function message(data) {
+    connections.forEach((c) => {
+      if (c.id !== connection.id) {
+        c.ws.send(data);
+      }
+    });
+  });
+
+  //remove connection from list when closed
+  ws.on('close', () => {
+    connections.findIndex((o, i) => {
+      if (o.id === connection.id) {
+        connections.splice(i, 1);
+        return true;
+      }
+    });
+  });
+
+  //ping pong to keep connection alive
+  ws.on('pong', () => {
+    connection.alive = true;
+  });
+});
+
+//keep active connections alive
+setInterval(() => {
+  connections.forEach((c) => {
+    if (!c.alive) {
+      c.ws.terminate();
+    }
+    c.alive = false;
+    c.ws.ping();
+  });
+}, 10000);
