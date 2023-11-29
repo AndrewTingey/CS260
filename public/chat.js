@@ -1,3 +1,7 @@
+//Adjust the websocket protocol to use the same port as the HTTP server:
+const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
+
 // Get the chat input and chat history elements
 const chatInput = document.getElementById('chat-input');
 const chatHistory = document.querySelector('.chat-history');
@@ -11,11 +15,10 @@ sendButton.addEventListener('click', (event) => {
     const message = chatInput.value;
 
     addMessage(message, 'You');
-    
-    //this is a joke for halloween
-    if (chatHistory.children.length === 2) {
-        addMessage("BOO!", 'Ghost');
-    }
+    // const name = document.getElementById('name').value;
+
+    const name = localStorage.getItem('username');
+    socket.send('{"username": "' + name + '", "message": "' + message + '"}');
 
     // Clear the chat input field
     chatInput.value = '';
@@ -31,3 +34,18 @@ function addMessage(message, username) {
     chatHistory.appendChild(chatMessage);
     chatHistory.scrollTop = chatHistory.scrollHeight;
 }
+
+socket.onopen = (event) => {
+    addMessage('Connected!', 'System');
+};
+
+socket.onmessage = async (event) => {
+    const text = await event.data.text();
+    const chat = JSON.parse(text);
+    addMessage(chat.message, chat.username); //this is different
+};
+
+socket.onclose = (event) => {
+    addMessage('Disconnected!', 'System');
+}
+
