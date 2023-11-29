@@ -167,7 +167,7 @@ wss.on('connection', (ws) => {
 
   //forward message to everyone except sender
   ws.on('message', function message(data) {
-    console.log('received: %s', data);
+    // console.log('received: %s', data);
     connections.forEach((c) => {
       if (c.id !== connection.id) {
         c.ws.send(data);
