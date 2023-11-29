@@ -36,7 +36,7 @@
     <main class="login">
       <!-- shows when logging in or registering -->
       <h1>Welcome</h1>
-      <div id="loginControls" style="display: none">
+      <div class="text-center" id="loginControls" style="display: none">
         <p class="login-inputs">Login to play</p>
         <div class="login-inputs">
           <div>
@@ -54,9 +54,11 @@
 
       <!-- shows when logged in -->
       <div id="playControls" style="display: none">
-        <div id="playerName"></div>
-        <button type="button" class="btn btn-primary" onclick="play()">Play</button>
-        <button type="button" class="btn btn-secondary" onclick="logout()">Logout</button>
+        <div class="text-center" id="playerName"></div>
+        <button type="button" class="btn btn-primary my-1" onclick="playLocal()">Pass 'n' Play</button>
+        <button type="button" class="btn btn-primary my-1" onclick="playAI()">Play AI</button>
+        <button type="button" class="btn btn-primary my-1" onclick="playOnline()">Play Online</button>
+        <button type="button" class="btn btn-secondary my-1" onclick="logout()">Logout</button>
       </div>
     </main>
 

@@ -4,7 +4,7 @@
   if (username) {
     document.querySelector('#playerName').textContent = username;
     setDisplay('loginControls', 'none');
-    setDisplay('playControls', 'block');
+    setDisplay('playControls', 'flex', 'column');
   } else {
     setDisplay('loginControls', 'block');
     setDisplay('playControls', 'none');
@@ -39,11 +39,26 @@ async function loginOrRegister(endpoint) {
     //This sections is different in simon/login.js
   } else {
     localStorage.setItem("username", username);
-    window.location.href = "play.html";
+
+    document.querySelector('#playerName').textContent = username;
+    setDisplay('loginControls', 'none');
+    setDisplay('playControls', 'flex', 'column');
+    // window.location.href = "play.html";
   }
 }
 
-function play() {
+function playLocal() {
+  localStorage.setItem("playVs", "computer");
+  window.location.href = 'play.html';
+}
+
+function playAI() {
+  localStorage.setItem("playVs", "ai");
+  window.location.href = 'play.html';
+}
+
+function playOnline() {
+  localStorage.setItem("playVs", "online");
   window.location.href = 'play.html';
 }
 
@@ -62,9 +77,10 @@ async function getUser(email) {
   return null;
 }
 
-function setDisplay(controlId, display) {
+function setDisplay(controlId, display, flexDirection = 'row') {
   const playControlEl = document.querySelector(`#${controlId}`);
   if (playControlEl) {
     playControlEl.style.display = display;
+    playControlEl.style.flexDirection = flexDirection;
   }
 }

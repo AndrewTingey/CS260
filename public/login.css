@@ -10,12 +10,14 @@
 
 .login-buttons {
     margin-top: 10px;
-    display: block;
+    display: flex;
     justify-content: center;
     justify-items: center;
 }
 
 .login-inputs {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
 }
 
