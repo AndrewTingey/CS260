@@ -18,6 +18,7 @@ class GameBoard {
         this.clickedj = 0;
         this.gameWinner = null;
         this.bigBoard = [];
+        this.gameID = null;
         this.initialize();
     }
 
@@ -53,6 +54,8 @@ class GameBoard {
             this.VS_CPU = false;
             this.VS_PLAYER = false;
             this.ONLINE = true;
+        } else {
+            console.log("Error: invalid opponent type", opponent);
         }
     }
 
@@ -332,17 +335,8 @@ function cellMouseOutEventListener() {
 }
 
 function setOpponent() {
-    var opponent = document.getElementsByClassName("opponent");
-    for (let i = 0; i < opponent.length; i++) {
-        opponent[i].addEventListener("click", function() {
-            var current = document.getElementsByClassName("opponent active");
-            for (let j = 0; j < current.length; j++) {
-                current[j].classList.remove("active");
-            }
-            this.classList.add("active");
-            gameBoard.setOpponentType(this.id);
-        });
-    }
+    var opponent = localStorage.getItem("opponent");
+    gameBoard.setOpponentType(opponent);
 }
 
 

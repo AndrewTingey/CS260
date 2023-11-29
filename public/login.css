@@ -28,3 +28,19 @@
 #register {
     margin-left: 10px;
 }
+
+@keyframes dropdown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 50px; /* Adjust this value based on your needs */
+    opacity: 1;
+  }
+}
+
+.more-online-id.dropdown {
+  overflow: hidden;
+  animation: dropdown 0.5s ease-in-out forwards;
+}

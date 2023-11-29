@@ -48,18 +48,75 @@ async function loginOrRegister(endpoint) {
 }
 
 function playLocal() {
-  localStorage.setItem("playVs", "computer");
+  localStorage.setItem("opponent", "player");
   window.location.href = 'play.html';
 }
 
 function playAI() {
-  localStorage.setItem("playVs", "ai");
+  localStorage.setItem("opponent", "cpu");
   window.location.href = 'play.html';
 }
 
 function playOnline() {
-  localStorage.setItem("playVs", "online");
-  window.location.href = 'play.html';
+  var moreOnlineIdElements = document.getElementsByClassName('more-online-id');
+  for (var i = 0; i < moreOnlineIdElements.length; i++) {
+    moreOnlineIdElements[i].style.display = 'block';
+    moreOnlineIdElements[i].classList.add('dropdown');
+  }
+
+
+  localStorage.setItem("opponent", "online");
+  // window.location.href = 'play.html';
+}
+
+
+document.querySelector("#gameID").addEventListener("input", async (event) => {
+  const gameID = event.target.value;
+  const hostGameButton = document.querySelector("#hostGameButton");
+  const joinGameButton = document.querySelector("#joinGameButton");
+
+  if (gameID.length > 0) {
+    hostGameButton.disabled = false;
+    hostGameButton.classList.add("btn-primary");
+
+    joinGameButton.disabled = true;
+    joinGameButton.classList.remove("btn-primary");
+
+    const gameExists = await checkGameExists(gameID);
+    if (gameExists) {
+      joinGameButton.disabled = false;
+      joinGameButton.classList.add("btn-primary");
+    }
+  } else {
+    hostGameButton.disabled = true;
+    hostGameButton.classList.remove("btn-primary");
+    joinGameButton.disabled = true;
+    joinGameButton.classList.remove("btn-primary");
+  }
+});
+
+
+async function checkGameExists(gameID) {
+  // Make an API call to check if the game ID exists on the server
+  // Replace the API endpoint with the actual endpoint for checking game existence
+
+  return false;  
+  // const response = await fetch(`/api/game/${gameID}`);
+  // return response.status === 200;
+}
+
+function hostGame() {
+  console.log("Host game");
+  gameID = document.querySelector("#gameID").value;
+  localStorage.setItem("gameID", gameID);
+}
+
+function joinGame() {
+  console.log("Join game");
+}
+
+function test() {
+  console.log("Test");
 }
 
 function logout() {

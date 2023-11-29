@@ -6,37 +6,37 @@ export function getCPUMove() {
 
     //TODO
     //intellegent move by minimax
-    let bestScore = -Infinity;
-    let bestMove = {};
-    for (let I = 0; I < 3; I++) {
-        for (let J = 0; J < 3; J++) {
-            for (let i = 0; i < 3; i++) {
-                for (let j = 0; j < 3; j++) {
-                    if (gameBoard.validMove(I, J, i, j)) {
-                        gameBoard.makeMove(I, J, i, j, 'X');
-                        let score = minimax(gameBoard, 0, false);
-                        gameBoard.makeMove(I, J, i, j, null);
-                        if (score > bestScore) {
-                            bestScore = score;
-                            bestMove = {I, J, i, j};
-                        }
-                    }
-                }
-            }
-        }
-    }
-    console.log("BestMove: ", bestMove);
-    return bestMove;
+    // let bestScore = -Infinity;
+    // let bestMove = {};
+    // for (let I = 0; I < 3; I++) {
+    //     for (let J = 0; J < 3; J++) {
+    //         for (let i = 0; i < 3; i++) {
+    //             for (let j = 0; j < 3; j++) {
+    //                 if (gameBoard.validMove(I, J, i, j)) {
+    //                     gameBoard.makeMove(I, J, i, j, 'X');
+    //                     let score = minimax(gameBoard, 0, false);
+    //                     gameBoard.makeMove(I, J, i, j, null);
+    //                     if (score > bestScore) {
+    //                         bestScore = score;
+    //                         bestMove = {I, J, i, j};
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    // console.log("BestMove: ", bestMove);
+    // return bestMove;
 
     
     //not an inteligent move, just random I J, i, j
-    // do {
-    //     move.I = Math.floor(Math.random() * 3);
-    //     move.J = Math.floor(Math.random() * 3);
-    //     move.i = Math.floor(Math.random() * 3);
-    //     move.j = Math.floor(Math.random() * 3);
-    // } while (!gameBoard.validMove(move.I, move.J, move.i, move.j));
-    // return move;
+    do {
+        move.I = Math.floor(Math.random() * 3);
+        move.J = Math.floor(Math.random() * 3);
+        move.i = Math.floor(Math.random() * 3);
+        move.j = Math.floor(Math.random() * 3);
+    } while (!gameBoard.validMove(move.I, move.J, move.i, move.j));
+    return move;
 }
 
 export function minimax(board, depth, isMaximizing) {
