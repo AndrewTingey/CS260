@@ -86,3 +86,12 @@ For this deliverable I associate the game history with the logged in user.
 - **Existing user** - Stores the games under the same user if the user already exists.
 - **Use MongoDB to store credentials** - Stores both user and their games.
 - **Restricts functionality** - You cannot play the game until you sign into the game
+
+## WebSocket deliverable
+
+For this deliverable I used webSocket to play the game online
+
+- **Backend listens for WebSocket connection** - done!
+- **Frontend makes WebSocket connection** - done!
+- **Data sent over WebSocket connection** - i got the chat working, but it sent to everyone connected. I got ambitious and tried sending game moves over websocket before connecting only 2 players at a time and ended up breaking a lot of what was working. I've submitted my last successful git commit
+- **WebSocket data displayed** - anybody connected to any game can message in the same chat. I plan to limit this to only those in the same game. Also i plan to hide the chat box for local games when we do react. 
