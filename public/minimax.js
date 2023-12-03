@@ -35,7 +35,7 @@ export function getCPUMove() {
         move.J = Math.floor(Math.random() * 3);
         move.i = Math.floor(Math.random() * 3);
         move.j = Math.floor(Math.random() * 3);
-    } while (!gameBoard.validMove(move.I, move.J, move.i, move.j));
+    } while (!gameBoard.minimaxValidMove(move.I, move.J, move.i, move.j));
     return move;
 }
 

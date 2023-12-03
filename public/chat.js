@@ -18,7 +18,15 @@ sendButton.addEventListener('click', (event) => {
     // const name = document.getElementById('name').value;
 
     const name = localStorage.getItem('username');
-    socket.send('{"username": "' + name + '", "message": "' + message + '"}');
+    const chatMessage = {
+        type: 'chatMessage',
+        gameID: localStorage.getItem('gameID'),
+        data: {
+            username: name,
+            message: message
+        }
+    }
+    socket.send(JSON.stringify(chatMessage));
 
     // Clear the chat input field
     chatInput.value = '';
@@ -39,11 +47,29 @@ socket.onopen = (event) => {
     addMessage('Connected!', 'System');
 };
 
+//recieving messages
 socket.onmessage = async (event) => {
+    console.log("Recieved message: ", event.data);
     const text = await event.data.text();
-    const chat = JSON.parse(text);
-    addMessage(chat.message, chat.username); //this is different
+    const data = JSON.parse(text);
+    if (data.type === 'chatMessage') {
+        const chat = data.data;
+        addMessage(chat.message, chat.username);
+    } else if (data.type === 'gameMove') {
+        const gameID = data.gameID;
+        const gameMove = data.data;
+        console.log(gameMove);
+    } else if (data.type === 'joinGame') {
+        console.log("Join game");
+        console.log("Data: ", data); 
+    } else {
+        console.log("ERROR: Unknown message type: ", data.type);
+    }
 };
+
+socket.onerror = (event) => {
+    addMessage('Error: ' + event, 'System');
+}
 
 socket.onclose = (event) => {
     addMessage('Disconnected!', 'System');

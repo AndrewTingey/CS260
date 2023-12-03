@@ -54,6 +54,11 @@ class GameBoard {
             this.VS_CPU = false;
             this.VS_PLAYER = false;
             this.ONLINE = true;
+            this.gameID = localStorage.getItem("gameID");
+
+            //show gameID and username on screen
+            document.getElementById("gameID").innerHTML = "Game ID: " + this.gameID;
+            document.getElementById("playerName").innerHTML = "Username: " + localStorage.getItem("username");
         } else {
             console.log("Error: invalid opponent type", opponent);
         }
@@ -77,6 +82,40 @@ class GameBoard {
     }
 
     validMove(bigI, bigJ, lili, lilj) {
+        //game is over
+        if (this.gameWinner != null) {
+            return false;
+        }
+
+        //not user's turn
+        if (this.playerTurn != this.userSymbol) {
+            return false;
+        }
+
+        //space is playable
+        if (this.bigBoard[bigI][bigJ][lili][lilj] == "") {
+            //first move is always good
+            if (this.previ == -1 && this.prevj == -1) {
+                return true;
+            }
+            //box is already won
+            else if (this.checkWinner(this.bigBoard[bigI][bigJ]) != null) {
+                return false;
+            } 
+            //last sent to completed box, any open space is playable
+            else if (this.checkWinner(this.bigBoard[this.previ][this.prevj]) != null) {
+                return true;
+            } 
+            //otherwise, must play in restricted box
+            else if (bigI == this.previ && bigJ == this.prevj) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //used for minimax, not user input
+    minimaxValidMove(bigI, bigJ, lili, lilj) {
         //game is over
         if (this.gameWinner != null) {
             return false;
@@ -125,7 +164,12 @@ class GameBoard {
         }
 
         //toggle turn
-        if (this.VS_CPU) {
+        if (this.VS_PLAYER) {
+            this.playerTurn = this.toggleXO(this.playerTurn);
+            this.userSymbol = this.playerTurn;
+            document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
+            this.highlightBoard();
+        } else if (this.VS_CPU) {
             this.playerTurn = this.toggleXO(this.playerTurn);
             document.getElementById("player-turn-label").innerHTML = "CPU's turn";
             this.highlightBoard();
@@ -137,13 +181,25 @@ class GameBoard {
                 move = getCPUMove();
                 this.updateBoard(move.I, move.J, move.i, move.j);
 
+                //update turn
                 this.playerTurn = this.toggleXO(this.playerTurn);
                 document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
                 this.highlightBoard();
             }, 1000);
-        } else {
-            this.playerTurn = this.toggleXO(this.playerTurn);
+        } else if (this.ONLINE) {
+            //send move
+            await this.sendMove(this.getGameState());
 
+            this.playerTurn = this.toggleXO(this.playerTurn);
+            document.getElementById("player-turn-label").innerHTML = "Waiting for opponent";
+            this.highlightBoard();
+            var move;
+            //get and make opponents move
+            move = await this.getOpponentMove(); 
+            this.updateBoard(move.I, move.J, move.i, move.j);
+
+            //update turn
+            this.playerTurn = this.toggleXO(this.playerTurn);
             document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
             this.highlightBoard();
         }
@@ -291,6 +347,47 @@ class GameBoard {
             }
         }
     }
+
+    getGameState() {
+        return {
+            bigBoard: this.bigBoard,
+            playerTurn: this.playerTurn,
+            prevI: this.prevI,
+            prevJ: this.prevJ,
+            previ: this.previ,
+            prevj: this.prevj,
+            gameWinner: this.gameWinner
+        };
+    }
+
+    async sendMove(gameState) {
+        sendGameMove(gameState);
+    }
+
+    async getOpponentMove() {
+        var move = {
+            I: 0,
+            J: 0,
+            i: 0,
+            j: 0
+        };
+        //wait until message is recieved
+
+
+        return move;
+    }
+
+    async deleteGame() {
+        try {
+            const response = await fetch('/api/game/' + this.gameID, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+            console.log("Data recieved: \n\t" + JSON.stringify(data));
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 function isValidMove(move) {
@@ -334,15 +431,10 @@ function cellMouseOutEventListener() {
     }
 }
 
-function setOpponent() {
-    var opponent = localStorage.getItem("opponent");
-    gameBoard.setOpponentType(opponent);
-}
-
-
 let gameBoard = new GameBoard();
 gameBoard.registerEventListeners();
-setOpponent();
+let opponent = localStorage.getItem("opponent");
+gameBoard.setOpponentType(opponent);
 
 export {
     gameBoard

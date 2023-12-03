@@ -74,14 +74,16 @@ apiRouter.get('/user/:email', async (req, res) => {
 var secureAPIRouter = express.Router();
 apiRouter.use(secureAPIRouter);
 
+//TODO fix this, getUserByToken doesn't return a user by their authToken
 secureAPIRouter.use(async (req, res, next) => {
-  authToken = req.cookies[authCookieName];
-  const user = await DB.getUserByToken(authToken);
-  if (user) {
-    next();
-  } else {
-    res.status(401).send({error: 'Not logged in'});
-  }
+  next();
+  // authToken = req.cookies[authCookieName];
+  // const user = await DB.getUserByToken(authToken);
+  // if (user) {
+  //   next();
+  // } else {
+  //   res.status(401).send({error: 'Not logged in'});
+  // }
 });
 
 app.post('/cookie/:name/:value', (req, res, next) => {
@@ -115,6 +117,33 @@ secureAPIRouter.post('/gameHistory', async (req, res) => {
 secureAPIRouter.delete('/gameHistory', async (req, res) => {
   const dbGameHistory = await DB.clearGameHistory(req.cookies);
   res.send(dbGameHistory);
+});
+
+//regsiterGame
+apiRouter.post('/game/:gameID', async (req, res) => {
+  const gameID = req.params.gameID;
+  const username = req.body.username;
+  const result = await DB.registerGame(gameID, username);
+  
+  res.send({ message: 'game registered successfully', result: result });
+});
+
+//getGameState
+apiRouter.get('/game/:gameID', async (req, res) => {
+  const gameID = req.params.gameID;
+  const result = await DB.getGame(gameID);
+  if (result === null) {
+    res.status(204).send({error: 'Game not found'});
+  } else {
+    res.send(result);
+  }
+});
+
+//delete game
+apiRouter.delete('/game/:gameID', async (req, res) => {
+  const gameID = req.params.gameID;
+  const result = await DB.deleteGame(gameID);
+  res.send(result);
 });
 
 // Return the application's index.html file
@@ -154,35 +183,36 @@ server.on('upgrade', (request, socket, head) => {
   });
 });
 
-// keep track of all connections
-let connections = [];
+//keep track of gameConnections instead
+//<gameID, [connection1, connection2]>
+let gameConnections = new Map();
 
 wss.on('connection', (ws) => {
-  const connection = { 
-    id: connections.length + 1,
-    alive: true,
-    ws: ws
-  };
-  connections.push(connection);
+  //connections saved on joinGame connection
 
   //forward message to everyone except sender
   ws.on('message', function message(data) {
-    // console.log('received: %s', data);
-    connections.forEach((c) => {
-      if (c.id !== connection.id) {
-        c.ws.send(data);
-      }
-    });
+    //one for game move, chat message, and join game
+    const message = JSON.parse(data);
+    if (message.type === 'gameMove') {
+      console.log("sending game move: ", message.data, " to game: ", message.gameID);
+      handleGameMove(message.gameID, data);
+    } else if (message.type === 'chatMessage') {
+      console.log("sending chat message: ", message.data.message, " to game: ", message.gameID);
+      handleChatMessage(message.gameID, data);
+    } else if (message.type === 'joinGame') {
+      handleJoinGame(message.gameID, ws);
+      console.log("user: ", message.data.username, " joined game: ", message.gameID);
+    } else {
+      console.log("ERROR: Unknown message type: ", message.type);
+    }
   });
 
   //remove connection from list when closed
   ws.on('close', () => {
-    connections.findIndex((o, i) => {
-      if (o.id === connection.id) {
-        connections.splice(i, 1);
-        return true;
-      }
-    });
+    console.log("Connection closed");
+    removePlayerFromGame(ws);
+    console.log("Game connections: ", gameConnections);
   });
 
   //ping pong to keep connection alive
@@ -191,13 +221,58 @@ wss.on('connection', (ws) => {
   });
 });
 
-//keep active connections alive
+//keep active gameConnections alive
 setInterval(() => {
-  connections.forEach((c) => {
-    if (!c.alive) {
-      c.ws.terminate();
-    }
-    c.alive = false;
-    c.ws.ping();
+  gameConnections.forEach((connections, gameID) => {
+    connections.forEach((c) => {
+      if (!c.alive) {
+        c.ws.terminate();
+      }
+      c.alive = false;
+      c.ws.ping();
+    });
   });
 }, 10000);
+
+function broadcastToGame(gameID, data) {
+  //send data to all connections with gameID
+  if (gameConnections.has(gameID)) {
+    const playerConnections = gameConnections.get(gameID);
+    playerConnections.forEach((c) => {
+      if(c !== ws && c.readyState === WebSocket.OPEN) {
+        c.send(data);
+      } else {
+        console.log("ERROR: Connection not open: ", c);
+      }
+    });
+  } else {
+    console.log("ERROR: No connections found for gameID: ", gameID);
+  }
+}
+
+function handleJoinGame(gameID, ws) {
+  if (!gameConnections.has(gameID)) {
+    gameConnections.set(gameID, new Set());
+  }
+  let connected = gameConnections.get(gameID).add(ws);
+  if (connected.length > 2) {
+    console.log("ERROR: More than 2 players connected to game: ", gameID);
+  }
+}
+
+function handleChatMessage(gameID, messageData) {
+  broadcastToGame(gameID, messageData);
+}
+
+function handleGameMove(gameID, gameMove) {
+  broadcastToGame(gameID, gameMove);
+}
+
+function removePlayerFromGame(ws) {
+  gameConnections.forEach((connections, gameID) => {
+    if (connections.has(ws)) {
+      connections.delete(ws);
+    }
+  });
+}
+

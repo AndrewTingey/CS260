@@ -8,6 +8,7 @@ const client = new MongoClient(url);
 const db = client.db('gameLog');
 const userCollection = db.collection('users');
 const gameCollection = db.collection('gameLog');
+const liveGamesCollection = db.collection('liveGames');
 
 // test connection
 (async function testConnection() {
@@ -23,7 +24,9 @@ function getUser(email) {
 }
 
 function getUserByToken(token) {
-  return userCollection.findOne({ token: token });
+  return userCollection.findOne();
+  //TODO - ADD COOKIES TO A USER COLLECTION AND CHECK FOR TOKEN
+  //return userCollection.findOne({ token: token });
 }
 
 async function createUser(email, password) {
@@ -63,6 +66,62 @@ async function clearGameHistory(user) {
   return result;
 }
 
+async function getGame(gameID) {
+  const query = { gameID };
+  const options = { limit: 1 };
+  const cursor = await liveGamesCollection.find(query, options);
+  const matchingGames = await cursor.toArray();
+  if (matchingGames.length === 0) {
+    return null;
+  } else if (matchingGames.length === 1) {
+    return matchingGames[0];
+  } else {
+    console.log("ERROR: Multiple games found with gameID: ", gameID);
+    return null;
+  }
+}
+
+async function setGame(gameID, game) {
+  console.log("Game: ", game);
+  console.log("Gameclass: ", game.constructor.name);
+  const result = await liveGamesCollection.updateOne({ gameID }, { $set: game }, { upsert: true });
+  return result;
+}
+
+async function registerGame(gameID, user) {
+  let existingGame = await getGame(gameID);
+  console.log("Existing game: ", existingGame);
+
+  if (!existingGame) {
+    //random chance of playing first and playing as X
+    let playingFirst = Math.random() < 0.5;
+    let playingAsX = Math.random() < 0.5;
+    let game = {
+      gameID: gameID,
+      hostingUser: user,
+      opponent: null,
+      playingAsX: playingAsX ? user : null,
+      playingAsO: playingAsX ? null : user,
+      playingFirst: playingFirst ? user : null,
+      numberPlayers: 1,
+    }
+    return await setGame(gameID, game);
+  } else {
+    let game = existingGame;
+    game.opponent = user;
+    game.numberPlayers = 2;
+    if (game.playingAsX === null) {
+      game.playingAsX = user;
+    } else if (game.playingAsO === null) {
+      game.playingAsO = user;
+    }
+    if(game.playingFirst === null) {
+      game.playingFirst = user;
+    }
+    return await setGame(gameID, game);
+  }
+}
+
 module.exports = { 
   addToGameHistory, 
   getGameHistory, 
@@ -70,4 +129,7 @@ module.exports = {
   getUserByToken,
   createUser, 
   clearGameHistory,
+  getGame,
+  setGame,
+  registerGame,
 };
