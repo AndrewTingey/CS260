@@ -125,7 +125,7 @@ document.querySelector("#gameID").addEventListener("input", async (event) => {
 });
 
 async function hostGame() {
-  console.log("Host game");
+  console.log("Host game:\n\t");
   gameID = document.querySelector("#gameID").value;
   localStorage.setItem("gameID", gameID);
   
@@ -149,66 +149,51 @@ async function hostGame() {
     // console.log("Response: ", response);
   }
 
-  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
-  const message = {
-    type: 'joinGame',
-    gameID: gameID,
-    data: {
-      username: localStorage.getItem("username"),
-    }
-  }
-  //wait until ready to send message, then send
-  if (socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify(message));
-  } else {
-    socket.addEventListener('open', function () {
-      socket.send(JSON.stringify(message));
-    });
-  }
-  socket.onopen = (event) => { 
-    console.log("Socket opened");
-  }
-
-  socket.onerror = (event) => {
-    console.log("Socket error: ", event);
-  }
-
-  socket.onclose = (event) => {
-    console.log("Socket closed: ", event);
-  }
-
-  socket.onmessage = async (event) => {
-    console.log("Recieved message TO WRONG CONNECTION: ", event.data);
-    const text = await event.data.text();
-  } 
+  // const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  // const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
+  // const message = {
+  //   type: 'joinGame',
+  //   gameID: gameID,
+  //   data: {
+  //     username: localStorage.getItem("username"),
+  //   }
+  // }
+  // //wait until ready to send message, then send
+  // if (socket.readyState === WebSocket.OPEN) {
+  //   socket.send(JSON.stringify(message));
+  // } else {
+  //   socket.addEventListener('open', function () {
+  //     socket.send(JSON.stringify(message));
+  //   });
+  // }
+  
 
   window.location.href = 'play.html';
 }
 
-function joinGame() {
-  console.log("Join game");
+async function joinGame() {
+  console.log("Join game\n\t");
   gameID = document.querySelector("#gameID").value;
   localStorage.setItem("gameID", gameID);
 
-  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
-
-  const message = {
-    type: 'joinGame',
-    gameID: gameID,
-    data: {
+  const response = await fetch(`/api/game/${gameID}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      gameID: gameID,
       username: localStorage.getItem("username"),
-    }
-  }
-  
-  //wait until ready to send message, then send
-  if (socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify(message));
+    }),
+  });
+
+  if (response.status === 200) {
+    console.log("Game registered successfully");
+    // console.log("Response: ", response);
+    //window.location.href = 'play.html';
   } else {
-    socket.addEventListener('open', function () {
-      socket.send(JSON.stringify(message));
-    });
+    console.log("Game registration failed");
+    // console.log("Response: ", response);
   }
 
   window.location.href = 'play.html';

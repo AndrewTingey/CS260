@@ -90,8 +90,9 @@ async function setGame(gameID, game) {
 
 async function registerGame(gameID, user) {
   let existingGame = await getGame(gameID);
+  // console.log("Existing game: ", existingGame);
   console.log("Existing game: ", existingGame);
-
+  //no game, create one
   if (!existingGame) {
     //random chance of playing first and playing as X
     let playingFirst = Math.random() < 0.5;
@@ -106,20 +107,21 @@ async function registerGame(gameID, user) {
       numberPlayers: 1,
     }
     return await setGame(gameID, game);
-  } else {
-    let game = existingGame;
-    game.opponent = user;
-    game.numberPlayers = 2;
-    if (game.playingAsX === null) {
-      game.playingAsX = user;
-    } else if (game.playingAsO === null) {
-      game.playingAsO = user;
-    }
-    if(game.playingFirst === null) {
-      game.playingFirst = user;
-    }
-    return await setGame(gameID, game);
+  } 
+  //game exists, add user to game
+  let game = existingGame;
+  game.opponent = user;
+  game.numberPlayers = 2;
+  if (game.playingAsX === null) {
+    game.playingAsX = user;
+  } else if (game.playingAsO === null) {
+    game.playingAsO = user;
   }
+  if(game.playingFirst === null) {
+    game.playingFirst = user;
+  }
+  return await setGame(gameID, game);
+  //WORKING HERE - NEVER UPDATES TO 2 PLAYERS
 }
 
 module.exports = { 

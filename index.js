@@ -189,8 +189,11 @@ let gameConnections = new Map();
 
 wss.on('connection', (ws) => {
   //connections saved on joinGame connection
+  const connection = {
+    ws: ws,
+    alive: true,
+  };
 
-  //forward message to everyone except sender
   ws.on('message', function message(data) {
     //one for game move, chat message, and join game
     const message = JSON.parse(data);
@@ -199,7 +202,7 @@ wss.on('connection', (ws) => {
       handleGameMove(message.gameID, data);
     } else if (message.type === 'chatMessage') {
       console.log("sending chat message: ", message.data.message, " to game: ", message.gameID);
-      handleChatMessage(message.gameID, data);
+      handleChatMessage(message.gameID, data, ws);
     } else if (message.type === 'joinGame') {
       handleJoinGame(message.gameID, ws);
       console.log("user: ", message.data.username, " joined game: ", message.gameID);
@@ -212,18 +215,24 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log("Connection closed");
     removePlayerFromGame(ws);
-    console.log("Game connections: ", gameConnections);
   });
 
   //ping pong to keep connection alive
   ws.on('pong', () => {
     connection.alive = true;
+    gameConnections.forEach((game) => {
+      game.forEach((c) => {
+        if (c.ws === ws) {
+          c.alive = true;
+        }
+      });
+    });
   });
 });
 
 //keep active gameConnections alive
 setInterval(() => {
-  gameConnections.forEach((connections, gameID) => {
+  gameConnections.forEach((connections) => {
     connections.forEach((c) => {
       if (!c.alive) {
         c.ws.terminate();
@@ -234,15 +243,19 @@ setInterval(() => {
   });
 }, 10000);
 
-function broadcastToGame(gameID, data) {
+function broadcastToGame(gameID, data, ws) {
   //send data to all connections with gameID
   if (gameConnections.has(gameID)) {
     const playerConnections = gameConnections.get(gameID);
     playerConnections.forEach((c) => {
-      if(c !== ws && c.readyState === WebSocket.OPEN) {
-        c.send(data);
-      } else {
-        console.log("ERROR: Connection not open: ", c);
+      try {
+        //send data to all connections except sender
+        if (c.ws !== ws) {
+          c.ws.send(data);
+        }
+      } catch (e) {
+        console.log("ERROR: Failed to send message to connection: ", c);
+        console.log("ERROR: ", e);
       }
     });
   } else {
@@ -251,28 +264,43 @@ function broadcastToGame(gameID, data) {
 }
 
 function handleJoinGame(gameID, ws) {
+  const connection = {
+    ws: ws,
+    alive: true,
+  };
   if (!gameConnections.has(gameID)) {
     gameConnections.set(gameID, new Set());
   }
-  let connected = gameConnections.get(gameID).add(ws);
+  let connected = gameConnections.get(gameID).add(connection);
+
   if (connected.length > 2) {
     console.log("ERROR: More than 2 players connected to game: ", gameID);
+  } 
+  const message = {
+    type: 'joinGame',
+    gameID: gameID,
+    data: {
+      username: "ROBOT"
+    }
   }
+
+  broadcastToGame(gameID, JSON.stringify(message), ws);
 }
 
-function handleChatMessage(gameID, messageData) {
-  broadcastToGame(gameID, messageData);
+function handleChatMessage(gameID, messageData, ws) {
+  broadcastToGame(gameID, messageData, ws);
 }
 
-function handleGameMove(gameID, gameMove) {
-  broadcastToGame(gameID, gameMove);
+function handleGameMove(gameID, gameMove, ws) {
+  broadcastToGame(gameID, gameMove, ws);
 }
 
 function removePlayerFromGame(ws) {
   gameConnections.forEach((connections, gameID) => {
-    if (connections.has(ws)) {
-      connections.delete(ws);
-    }
+    connections.forEach((c) => {
+      if (c.ws === ws) {
+        connections.delete(c);
+      }
+    });
   });
 }
-

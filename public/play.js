@@ -1,4 +1,5 @@
 import { getCPUMove } from './minimax.js';
+import { setOnline } from './websocket.js';
 
 class GameBoard {
     //todo: check cpu/player/online are mutually exclusive
@@ -59,6 +60,9 @@ class GameBoard {
             //show gameID and username on screen
             document.getElementById("gameID").innerHTML = "Game ID: " + this.gameID;
             document.getElementById("playerName").innerHTML = "Username: " + localStorage.getItem("username");
+
+            //set online
+            setOnline();
         } else {
             console.log("Error: invalid opponent type", opponent);
         }
@@ -440,6 +444,3 @@ export {
     gameBoard
 }
 
-function setOnline() {
-    console.log("setOnline");
-}
