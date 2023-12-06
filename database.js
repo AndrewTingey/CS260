@@ -82,8 +82,7 @@ async function getGame(gameID) {
 }
 
 async function setGame(gameID, game) {
-  console.log("Game: ", game);
-  console.log("Gameclass: ", game.constructor.name);
+  console.log(`Setting gameID ${gameID}: `, game);
   const result = await liveGamesCollection.updateOne({ gameID }, { $set: game }, { upsert: true });
   return result;
 }
@@ -106,7 +105,8 @@ async function registerGame(gameID, user) {
       playingFirst: playingFirst ? user : null,
       numberPlayers: 1,
     }
-    return await setGame(gameID, game);
+    setGame(gameID, game);
+    return game;
   } 
   //game exists, add user to game
   let game = existingGame;
@@ -120,7 +120,8 @@ async function registerGame(gameID, user) {
   if(game.playingFirst === null) {
     game.playingFirst = user;
   }
-  return await setGame(gameID, game);
+  setGame(gameID, game);
+  return game;
   //WORKING HERE - NEVER UPDATES TO 2 PLAYERS
 }
 

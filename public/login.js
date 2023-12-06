@@ -124,9 +124,10 @@ document.querySelector("#gameID").addEventListener("input", async (event) => {
   }
 });
 
-async function hostGame() {
+async function joinGame() {
   console.log("Host game:\n\t");
   gameID = document.querySelector("#gameID").value;
+  const username = localStorage.getItem("username");
   localStorage.setItem("gameID", gameID);
   
   const response = await fetch(`/api/game/${gameID}`, {
@@ -136,65 +137,27 @@ async function hostGame() {
     },
     body: JSON.stringify({
       gameID: gameID,
-      username: localStorage.getItem("username"),
+      username: username,
     }),
   });
 
+  const result = await response.json();
+
   if (response.status === 200) {
-    console.log("Game registered successfully");
-    // console.log("Response: ", response);
-    //window.location.href = 'play.html';
+    console.log(result.message);
+    const gameDetails = result.data;
+    if (gameDetails.playingAsX === username) {
+      localStorage.setItem("playingAs", "X");
+    } else if (gameDetails.playingAsO === username) {
+      localStorage.setItem("playingAs", "O");
+    } else {
+      console.log("ERROR: User is not playing as X or O");
+    }
+    localStorage.setItem("playingFirst", gameDetails.playingFirst);
   } else {
     console.log("Game registration failed");
-    // console.log("Response: ", response);
   }
-
-  // const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  // const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
-  // const message = {
-  //   type: 'joinGame',
-  //   gameID: gameID,
-  //   data: {
-  //     username: localStorage.getItem("username"),
-  //   }
-  // }
-  // //wait until ready to send message, then send
-  // if (socket.readyState === WebSocket.OPEN) {
-  //   socket.send(JSON.stringify(message));
-  // } else {
-  //   socket.addEventListener('open', function () {
-  //     socket.send(JSON.stringify(message));
-  //   });
-  // }
   
-
-  window.location.href = 'play.html';
-}
-
-async function joinGame() {
-  console.log("Join game\n\t");
-  gameID = document.querySelector("#gameID").value;
-  localStorage.setItem("gameID", gameID);
-
-  const response = await fetch(`/api/game/${gameID}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      gameID: gameID,
-      username: localStorage.getItem("username"),
-    }),
-  });
-
-  if (response.status === 200) {
-    console.log("Game registered successfully");
-    // console.log("Response: ", response);
-    //window.location.href = 'play.html';
-  } else {
-    console.log("Game registration failed");
-    // console.log("Response: ", response);
-  }
 
   window.location.href = 'play.html';
 }

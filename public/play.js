@@ -1,5 +1,5 @@
 import { getCPUMove } from './minimax.js';
-import { setOnline } from './websocket.js';
+import { sendMove } from './websocket.js';
 
 class GameBoard {
     //todo: check cpu/player/online are mutually exclusive
@@ -24,7 +24,17 @@ class GameBoard {
     }
 
     initialize() {
-        //initialize full board
+        //get game if existing online game
+        if (this.ONLINE) {
+            this.gameID = localStorage.getItem("gameID");
+            //get game details from server
+            //WORKING HERE
+            //set game detail
+            //redraw board
+        }
+
+
+        //initialize full board if new game
         for (let i = 0; i < 3; i++) {
             this.bigBoard[i] = [];
             for (let j = 0; j < 3; j++) {
@@ -57,15 +67,74 @@ class GameBoard {
             this.ONLINE = true;
             this.gameID = localStorage.getItem("gameID");
 
-            //show gameID and username on screen
-            document.getElementById("gameID").innerHTML = "Game ID: " + this.gameID;
-            document.getElementById("playerName").innerHTML = "Username: " + localStorage.getItem("username");
 
-            //set online
-            setOnline();
+            //set game detail WORKING HERE. setGameDetails somehow does it backwards
+            this.setGameDetail();
         } else {
             console.log("Error: invalid opponent type", opponent);
         }
+    }
+
+    async setGameDetail() {
+        console.log("Setting game details");
+        
+        const username = localStorage.getItem("username");
+        this.userSymbol = localStorage.getItem("playingAs");
+        const userPlayingFirst = localStorage.getItem("playingFirst");
+        //show gameID and username on screen
+        document.getElementById("gameID").innerHTML = "Game ID: " + this.gameID;
+        document.getElementById("playerName").innerHTML = "Username: " + username;
+        document.getElementById("playingAs").innerHTML = "Playing as: " + this.userSymbol;
+        //probably dont show these ones:
+        document.getElementById("playingFirst").innerHTML = "Playing first: " + userPlayingFirst;
+        document.getElementById("playerTurn").innerHTML = this.playerTurn;
+
+
+
+        console.log("User symbol: ", this.userSymbol);
+        if (this.userSymbol == null || this.userSymbol == undefined || this.userSymbol == "undefined") {
+            //get gameDetails from server
+            const response = await fetch(`/api/game/${this.gameID}`);
+            const result = await response.json();
+            const data = result.data;
+            console.log("Fetched game details: ", data);
+            if (data.playingAsX == username) {
+                this.userSymbol = "X";
+            } else if (data.playingAsO == username) {
+                this.userSymbol = "O";
+            } else {
+                console.log("ERROR: User is not playing as X or O");
+            }
+            localStorage.setItem("playingAs", this.userSymbol);
+            localStorage.setItem("playingFirst", data.playingFirst);
+            console.log("User symbol: ", this.userSymbol);
+        }
+        console.log("userplayingFirst, username", userPlayingFirst, username);
+        if (userPlayingFirst == username) {
+            this.playerTurn = this.userSymbol;
+        } else {
+            this.playerTurn = this.toggleXO(this.userSymbol);
+            document.getElementById("playerTurn").innerHTML = this.playerTurn;
+            document.getElementById("player-turn-label").innerHTML = "Waiting for opponent";
+        }
+    }
+
+    redrawBoard() { //Haven't tested this
+        //redraw board
+        var largeTables = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board");
+        for (var i = 0; i < largeTables.length; i++) {
+            var smallCells = largeTables[i].getElementsByTagName("td");
+            for (var j = 0; j < smallCells.length; j++) {
+                smallCells[j].textContent = this.bigBoard[Math.floor(i/3)][i%3][Math.floor(j/3)][j%3];
+                smallCells[j].style.color = "var(--text-color)";
+                if (this.bigBoard[Math.floor(i/3)][i%3][Math.floor(j/3)][j%3] != "") {
+                    smallCells[j].style.cursor = "not-allowed";
+                } else {
+                    smallCells[j].style.cursor = "pointer";
+                }
+            }
+        }
+        this.highlightBoard();
     }
 
     updateBoard(bigI, bigJ, lili, lilj) {
@@ -83,6 +152,21 @@ class GameBoard {
             largeTable.textContent = localWinner;
             largeTable.style.fontSize = "100px";
         }
+    }
+
+    drawPrevMove() {
+        var cellContext = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[this.prevI*3+this.prevJ].getElementsByTagName("td")[this.previ*3+this.prevj];
+        cellContext.textContent = this.toggleXO(this.playerTurn); //previous move, not this move
+        cellContext.style.color = "var(--text-color)";
+        this.bigBoard[this.prevI][this.prevJ][this.previ][this.prevj] = this.playerTurn;
+        let localWinner = this.checkWinner(this.bigBoard[this.prevI][this.prevJ]);
+        if(localWinner != null) {
+            var largeTable = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[this.prevI*3+this.prevJ];
+            largeTable.textContent = localWinner;
+            largeTable.style.fontSize = "100px";
+        }
+        //update turn label
+        document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
     }
 
     validMove(bigI, bigJ, lili, lilj) {
@@ -171,10 +255,12 @@ class GameBoard {
         if (this.VS_PLAYER) {
             this.playerTurn = this.toggleXO(this.playerTurn);
             this.userSymbol = this.playerTurn;
+            document.getElementById("playerTurn").innerHTML = this.playerTurn;
             document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
             this.highlightBoard();
         } else if (this.VS_CPU) {
             this.playerTurn = this.toggleXO(this.playerTurn);
+            document.getElementById("playerTurn").innerHTML = this.playerTurn;
             document.getElementById("player-turn-label").innerHTML = "CPU's turn";
             this.highlightBoard();
             var move;
@@ -187,25 +273,30 @@ class GameBoard {
 
                 //update turn
                 this.playerTurn = this.toggleXO(this.playerTurn);
+                document.getElementById("playerTurn").innerHTML = this.playerTurn;
                 document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
                 this.highlightBoard();
             }, 1000);
         } else if (this.ONLINE) {
             //send move
-            await this.sendMove(this.getGameState());
-
             this.playerTurn = this.toggleXO(this.playerTurn);
+            console.log("Player ", this.userSymbol, " sent move. Now its ", this.playerTurn, "'s turn");
+            await this.sendMove(this.getGameState());
+            document.getElementById("playerTurn").innerHTML = this.playerTurn;
             document.getElementById("player-turn-label").innerHTML = "Waiting for opponent";
             this.highlightBoard();
-            var move;
-            //get and make opponents move
-            move = await this.getOpponentMove(); 
-            this.updateBoard(move.I, move.J, move.i, move.j);
 
-            //update turn
-            this.playerTurn = this.toggleXO(this.playerTurn);
-            document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
-            this.highlightBoard();
+
+            // var move;
+            // //get and make opponents move
+            // move = await this.getOpponentMove(); 
+            // this.updateBoard(move.I, move.J, move.i, move.j);
+
+            // //update turn
+            // this.playerTurn = this.toggleXO(this.playerTurn);
+            // document.getElementById("playerTurn").innerHTML = this.playerTurn;
+            // document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
+            // this.highlightBoard();
         }
     }
 
@@ -364,20 +455,37 @@ class GameBoard {
         };
     }
 
-    async sendMove(gameState) {
-        sendGameMove(gameState);
+    updateGameState(gameState) {
+        this.bigBoard = gameState.bigBoard;
+        this.playerTurn = gameState.playerTurn;
+        this.prevI = gameState.prevI;
+        this.prevJ = gameState.prevJ;
+        this.previ = gameState.previ;
+        this.prevj = gameState.prevj;
+        this.gameWinner = gameState.gameWinner;
+        document.getElementById("playerTurn").innerHTML = this.playerTurn;
+    }
+
+    async sendMove(gameState) { //should prolly rename these
+        sendMove(gameState); //using ws.js:sendMove()
     }
 
     async getOpponentMove() {
-        var move = {
-            I: 0,
-            J: 0,
-            i: 0,
-            j: 0
-        };
         //wait until message is recieved
+        console.log("Waiting for opponent move");
 
+        //set timeout till playerTurn is updated
+        while (this.playerTurn != this.userSymbol) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        console.log("Opponent move recieved");
 
+        let move = {
+            I: this.prevI,
+            J: this.prevJ,
+            i: this.previ,
+            j: this.prevj
+        }
         return move;
     }
 

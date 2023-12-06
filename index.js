@@ -123,9 +123,9 @@ secureAPIRouter.delete('/gameHistory', async (req, res) => {
 apiRouter.post('/game/:gameID', async (req, res) => {
   const gameID = req.params.gameID;
   const username = req.body.username;
-  const result = await DB.registerGame(gameID, username);
+  const data = await DB.registerGame(gameID, username);
   
-  res.send({ message: 'game registered successfully', result: result });
+  res.send({ message: 'game registered successfully!', data: data });
 });
 
 //getGameState
@@ -199,13 +199,13 @@ wss.on('connection', (ws) => {
     const message = JSON.parse(data);
     if (message.type === 'gameMove') {
       console.log("sending game move: ", message.data, " to game: ", message.gameID);
-      handleGameMove(message.gameID, data);
+      handleGameMove(message.gameID, data, ws);
     } else if (message.type === 'chatMessage') {
-      console.log("sending chat message: ", message.data.message, " to game: ", message.gameID);
+      // console.log("sending chat message: ", message.data.message, " to game: ", message.gameID);
       handleChatMessage(message.gameID, data, ws);
     } else if (message.type === 'joinGame') {
       handleJoinGame(message.gameID, ws);
-      console.log("user: ", message.data.username, " joined game: ", message.gameID);
+      // console.log("user: ", message.data.username, " joined game: ", message.gameID);
     } else {
       console.log("ERROR: Unknown message type: ", message.type);
     }
@@ -252,6 +252,9 @@ function broadcastToGame(gameID, data, ws) {
         //send data to all connections except sender
         if (c.ws !== ws) {
           c.ws.send(data);
+          console.log("Sent message to connection: ", c);
+        } else {
+          console.log("Not sending message to sender: ", c);
         }
       } catch (e) {
         console.log("ERROR: Failed to send message to connection: ", c);
@@ -280,7 +283,7 @@ function handleJoinGame(gameID, ws) {
     type: 'joinGame',
     gameID: gameID,
     data: {
-      username: "ROBOT"
+      username: "SERVER"
     }
   }
 

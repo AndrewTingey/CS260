@@ -1,3 +1,5 @@
+import { gameBoard } from "./play.js";
+
 //Adjust the websocket protocol to use the same port as the HTTP server:
 const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
 const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
@@ -35,8 +37,10 @@ sendButton.addEventListener('click', (event) => {
 function addMessage(message, username) {
     const chatHistory = document.querySelector('.chat-history');
     const chatMessage = document.createElement('li');
-    if (username === 'You') {
+    if (username === 'You'  || username === localStorage.getItem('username')) {
         chatMessage.innerHTML = `<span class="username" style="color: var(--primary-color)">You:</span> ${message}`;
+    } else if (username === 'System') {
+        chatMessage.innerHTML = `<span class="username" style="color: var(--system-color)">System:</span> ${message}`;
     } else {
         chatMessage.innerHTML = `<span class="username" style="color: var(--secondary-color)">${username}:</span> ${message}`;
     }
@@ -52,7 +56,7 @@ socket.onopen = (event) => {
 //recieving messages
 socket.onmessage = async (event) => {
 
-    console.log("Received message: ", event.data);
+    console.log("Received message in ws.js: ", event.data);
     let data;
     //TODO fix this hack, sometimes its a blob, sometimes its not
     //must be with how data is sent
@@ -69,17 +73,15 @@ socket.onmessage = async (event) => {
     } else if (data.type === 'gameMove') {
         const gameID = data.gameID;
         const gameMove = data.data;
-        console.log(gameMove);
+        console.log("Game Move: ", gameMove);
+        handleOppondentMove(gameMove.username, gameMove.move);
+        addMessage('played I: ' + gameMove.move.prevI + ' J: ' + gameMove.move.prevJ + ' i: ' + gameMove.move.previ + ' j: ' + gameMove.move.prevj, gameMove.username);
     } else if (data.type === 'joinGame') {
-        console.log("Join game");
         const gameID = data.gameID;
-        console.log("Game ID: ", gameID);
         const response = await fetch(`/api/game/${gameID}`);
         const gameDetails = await response.json();
-
         console.log("Game Details: ", gameDetails);
-
-        addMessage(`${gameDetails.opponent} joined the game`, 'System');
+        addMessage(` joined the game`, gameDetails.opponent);
     } else {
         console.log("ERROR: Unknown message type: ", data.type);
     }
@@ -98,8 +100,6 @@ function broadcastToGame() {
 }
 
 function setOnline() {
-    console.log("setOnline");
-
     const message = {
         type: 'joinGame',
         gameID: localStorage.getItem("gameID"),
@@ -109,4 +109,22 @@ function setOnline() {
     }
 
     socket.send(JSON.stringify(message));
+}
+
+export function sendMove(move) {
+    const message = {
+        type: 'gameMove',
+        gameID: localStorage.getItem("gameID"),
+        data: {
+            username: localStorage.getItem("username"),
+            move: move
+        }
+    }
+    socket.send(JSON.stringify(message));
+}
+
+export function handleOppondentMove(username, gameState) {
+    gameBoard.updateGameState(gameState);
+    gameBoard.drawPrevMove();
+    gameBoard.highlightBoard();
 }
