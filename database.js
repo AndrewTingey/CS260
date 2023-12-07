@@ -61,7 +61,6 @@ async function getGameHistory(user) {
 
 //TODO - this doesnt have functionality yet
 async function clearGameHistory(user) {
-  // console.log(`Clearing game history for ${user}`);
   const result = await gameCollection.deleteMany({ user });
   return result;
 }
@@ -124,14 +123,74 @@ async function registerGame(gameID, user) {
   return game;
 }
 
+async function removePlayerFromGame(gameID, user) {
+  let existingGame = await getGame(gameID);
+  // console.log("Existing game: ", existingGame);
+  //no game, create one
+  if (!existingGame) {
+    console.log("ERROR: No game found with gameID: ", gameID);
+    return null;
+  } 
+  //game exists, remove user from game
+  let game = existingGame;
+  if (game.playingAsX === user) {
+    game.playingAsX = null;
+  } else if (game.playingAsO === user) {
+    game.playingAsO = null;
+  }
+  if (game.playingFirst === user) {
+    game.playingFirst = null;
+  }
+  if (game.hostingUser === user) {
+    game.hostingUser = null;
+  }
+  if (game.opponent === user) {
+    game.opponent = null;
+  }
+  game.numberPlayers = 0;
+  if (game.playingAsX != null) {
+    game.numberPlayers++;
+  }
+  if (game.playingAsO != null) {
+    game.numberPlayers++;
+  }
+  setGame(gameID, game);
+  return game;
+}
+
+async function deleteGame(gameID) {
+  let existingGame = await getGame(gameID);
+  //no game, create one
+  if (!existingGame) {
+    console.log("ERROR: No game found with gameID: ", gameID);
+    return null;
+  } 
+  const result = await liveGamesCollection.deleteOne({ gameID });
+  return result;
+}
+
+async function clearLiveGames() {
+  const result = await liveGamesCollection.deleteMany({});
+  return result;
+}
+
+async function deleteUser(username) {
+  const result = await userCollection.deleteOne({ username });
+  return result;
+}
+
 module.exports = { 
   addToGameHistory, 
   getGameHistory, 
   getUser,
   getUserByToken,
   createUser, 
+  deleteUser,
   clearGameHistory,
+  removePlayerFromGame,
   getGame,
   setGame,
+  deleteGame,
   registerGame,
+  clearLiveGames,
 };

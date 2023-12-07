@@ -192,6 +192,8 @@ wss.on('connection', (ws) => {
   const connection = {
     ws: ws,
     alive: true,
+    username: null,
+    gameID: null,
   };
 
   ws.on('message', function message(data) {
@@ -201,10 +203,15 @@ wss.on('connection', (ws) => {
       console.log("sending game move: ", message.data, " to game: ", message.gameID);
       handleGameMove(message.gameID, data, ws);
     } else if (message.type === 'chatMessage') {
-      // console.log("sending chat message: ", message.data.message, " to game: ", message.gameID);
-      handleChatMessage(message.gameID, data, ws);
+      if (message.data.username === "master") {
+        handleMasterCommands(message.gameID, message.data.message, ws);
+      } else {
+        handleChatMessage(message.gameID, data, ws);
+      }
     } else if (message.type === 'joinGame') {
       handleJoinGame(message.gameID, ws);
+      connection.username = message.data.username;
+      connection.gameID = message.gameID;
       // console.log("user: ", message.data.username, " joined game: ", message.gameID);
     } else {
       console.log("ERROR: Unknown message type: ", message.type);
@@ -214,7 +221,8 @@ wss.on('connection', (ws) => {
   //remove connection from list when closed
   ws.on('close', () => {
     console.log("Connection closed");
-    removePlayerFromGame(ws);
+    removePlayerFromConnections(ws);
+    removePlayerFromGame(connection.gameID, connection.username);
   });
 
   //ping pong to keep connection alive
@@ -295,7 +303,7 @@ function handleGameMove(gameID, gameMove, ws) {
   broadcastToGame(gameID, gameMove, ws);
 }
 
-function removePlayerFromGame(ws) {
+function removePlayerFromConnections(ws) {
   gameConnections.forEach((connections, gameID) => {
     connections.forEach((c) => {
       if (c.ws === ws) {
@@ -303,4 +311,57 @@ function removePlayerFromGame(ws) {
       }
     });
   });
+}
+
+async function removePlayerFromGame(gameID, username) {
+  const gameDetails = await DB.removePlayerFromGame(gameID, username);
+  if (gameDetails.numberPlayers === 0) {
+    await DB.deleteGame(gameID);
+  }
+}
+
+function handleMasterCommands(gameID, message, ws) {
+  let response = "";
+  if (message === "Hi") {
+    console.log("Hello");
+    response = "Hello, master";
+  } else if (message === "HELP") {
+    response = "Commands: HELP, DELETE LIVE GAMES, DELETE GAME HISTORY <username>, DELETE CONNECTIONS, DELETE USER <username>";
+  } else if (message === "DELETE LIVE GAMES") {
+    console.log("Deleting all live games...");
+    response = "Deleted all live games";
+    DB.clearLiveGames();
+  } else if (message.startsWith("DELETE GAME HISTORY")) {
+    const username = message.split(" ")[3];
+    console.log("Deleting game history for: ", username);
+    response = "Deleted game history for: " + username;
+    DB.clearGameHistory(username);
+  } else if (message === "DELETE ALL CONNECTIONS") {
+    console.log("Deleting all connections...");
+    response = "Deleted all connections";
+    //delete all except for self
+    gameConnections.forEach((connections, gameID) => {
+      connections.forEach((c) => {
+        if (c.ws !== ws) {
+          c.ws.terminate();
+          connections.delete(c);
+        }
+      });
+    });
+  } else if (message.startsWith("DELETE USER")) {
+    const username = message.split(" ")[2];
+    console.log("Deleting user: ", username);
+    response = "Deleted user: " + username;
+    DB.deleteUser(username);
+  }
+  messageData = {
+    type: 'chatMessage',
+    data: {
+      username: "SERVER",
+      message: response,
+    }
+  }
+  
+  const buffer = Buffer.from(JSON.stringify(messageData));
+  handleChatMessage(gameID, buffer, null);
 }
