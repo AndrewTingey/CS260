@@ -1,5 +1,5 @@
 import { getCPUMove } from './minimax.js';
-import { sendToWS } from './websocket.js';
+import { sendToWS, welcomeFromSystem } from './websocket.js';
 
 class GameBoard {
     //todo: check cpu/player/online are mutually exclusive
@@ -113,19 +113,22 @@ class GameBoard {
 
         //set turnlabel
         if (gameDetails.numberPlayers == 1) {
-            document.getElementById("player-turn-label").innerHTML = "Waiting for an opponent to join";
+            document.getElementById("player-turn-label").innerHTML = "Waiting for an opponent to join\nGame ID: " + gameDetails.gameID;;
         } else if (gameDetails.numberPlayers == 2) {
             if (userPlayingFirst == username) {
                 this.playerTurn = this.userSymbol;
                 document.getElementById("playerTurn").innerHTML = this.playerTurn;
+                document.getElementById("player-turn-label").innerHTML = "Select a square to start the game!";
             } else {
                 this.playerTurn = this.toggleXO(this.userSymbol);
                 document.getElementById("playerTurn").innerHTML = this.playerTurn;
-                document.getElementById("player-turn-label").innerHTML = "Waiting for opponent";
+                document.getElementById("player-turn-label").innerHTML = "Waiting for opponent to start the game";
             }
         } else {
             console.log("Error: invalid number of players: ", gameDetails.numberPlayers);
         }
+
+        welcomeFromSystem(gameDetails);
     }
 
     redrawBoard() { //Haven't tested this

@@ -82,7 +82,6 @@ socket.onmessage = async (event) => {
         const gameDetails = await response.json();
         console.log("Game Details: ", gameDetails);
         gameBoard.setGameDetail(gameDetails);
-        addMessage(` joined the game`, gameDetails.opponent);
     } else {
         console.log("ERROR: Unknown message type: ", data.type);
     }
@@ -106,10 +105,6 @@ socket.onclose = (event) => {
     //TODO: redirect to homepage, remove player from DB and have rejoin
 }
 
-function broadcastToGame() {
-    console.log("Broadcasting to game");
-}
-
 function setOnline() {
     const message = {
         type: 'joinGame',
@@ -120,6 +115,25 @@ function setOnline() {
     }
 
     socket.send(JSON.stringify(message));
+}
+
+export function welcomeFromSystem(gameDetails) {
+    if (gameDetails.opponent != null) {
+        addMessage(` joined the game`, gameDetails.opponent);
+        if (gameDetails.playingAsX === localStorage.getItem("username")) {
+            addMessage(`You are playing as X's`, 'System');
+        } else if (gameDetails.playingAsO === localStorage.getItem("username")) {
+            addMessage(`You are playing as O's`, 'System');
+        } else {
+            console.log("ERROR: User is not playing as X or O");
+        }
+    
+        if (gameDetails.playingFirst === localStorage.getItem("username")) {
+            addMessage(`You get the first move`, 'System');
+        } else {
+            addMessage(gameDetails.opponent + ` gets the first move`, 'System');
+        }
+    }
 }
 
 export function sendToWS(move) {
