@@ -1,5 +1,5 @@
 import { getCPUMove } from './minimax.js';
-import { sendMove } from './websocket.js';
+import { sendToWS } from './websocket.js';
 
 class GameBoard {
     //todo: check cpu/player/online are mutually exclusive
@@ -49,7 +49,7 @@ class GameBoard {
         }
     }
 
-    setOpponentType(opponent) {
+    async setOpponentType(opponent) {
         //TODO:
         //eventually we'll want to hard reset the gameboard
         if (opponent == "cpu") {
@@ -69,53 +69,62 @@ class GameBoard {
 
 
             //set game detail WORKING HERE. setGameDetails somehow does it backwards
-            this.setGameDetail();
+            //get gameDetails from server
+            const response = await fetch(`/api/game/${this.gameID}`);
+            const result = await response.json();
+            console.log("Fetched game details: ", result);
+
+
+            this.setGameDetail(result);
         } else {
             console.log("Error: invalid opponent type", opponent);
         }
     }
 
-    async setGameDetail() {
+    setGameDetail(gameDetails) {
         console.log("Setting game details");
         
         const username = localStorage.getItem("username");
-        this.userSymbol = localStorage.getItem("playingAs");
-        const userPlayingFirst = localStorage.getItem("playingFirst");
+        const userPlayingFirst = gameDetails.playingFirst;
+        let opponentName = null;
+
+        if (gameDetails.playingAsO == username) {
+            this.userSymbol = "O";
+        } else if (gameDetails.playingAsO != null) {
+            opponentName = gameDetails.playingAsO;
+        }
+        if (gameDetails.playingAsX == username) {
+            this.userSymbol = "X";
+        } else if (gameDetails.playingAsX != null) {
+            opponentName = gameDetails.playingAsX;
+        }
+
         //show gameID and username on screen
-        document.getElementById("gameID").innerHTML = "Game ID: " + this.gameID;
+        document.getElementById("gameID").innerHTML = "Game ID: " + gameDetails.gameID;
         document.getElementById("playerName").innerHTML = "Username: " + username;
         document.getElementById("playingAs").innerHTML = "Playing as: " + this.userSymbol;
         //probably dont show these ones:
         document.getElementById("playingFirst").innerHTML = "Playing first: " + userPlayingFirst;
-        document.getElementById("playerTurn").innerHTML = this.playerTurn;
+        document.getElementById("opponentName").innerHTML = "Opponent: " + opponentName;
 
+        //set localStorage
+        localStorage.setItem("playingAs", this.userSymbol);
+        localStorage.setItem("playingFirst", gameDetails.playingFirst);
 
-
-        console.log("User symbol: ", this.userSymbol);
-        if (this.userSymbol == null || this.userSymbol == undefined || this.userSymbol == "undefined") {
-            //get gameDetails from server
-            const response = await fetch(`/api/game/${this.gameID}`);
-            const result = await response.json();
-            const data = result.data;
-            console.log("Fetched game details: ", data);
-            if (data.playingAsX == username) {
-                this.userSymbol = "X";
-            } else if (data.playingAsO == username) {
-                this.userSymbol = "O";
+        //set turnlabel
+        if (gameDetails.numberPlayers == 1) {
+            document.getElementById("player-turn-label").innerHTML = "Waiting for an opponent to join";
+        } else if (gameDetails.numberPlayers == 2) {
+            if (userPlayingFirst == username) {
+                this.playerTurn = this.userSymbol;
+                document.getElementById("playerTurn").innerHTML = this.playerTurn;
             } else {
-                console.log("ERROR: User is not playing as X or O");
+                this.playerTurn = this.toggleXO(this.userSymbol);
+                document.getElementById("playerTurn").innerHTML = this.playerTurn;
+                document.getElementById("player-turn-label").innerHTML = "Waiting for opponent";
             }
-            localStorage.setItem("playingAs", this.userSymbol);
-            localStorage.setItem("playingFirst", data.playingFirst);
-            console.log("User symbol: ", this.userSymbol);
-        }
-        console.log("userplayingFirst, username", userPlayingFirst, username);
-        if (userPlayingFirst == username) {
-            this.playerTurn = this.userSymbol;
         } else {
-            this.playerTurn = this.toggleXO(this.userSymbol);
-            document.getElementById("playerTurn").innerHTML = this.playerTurn;
-            document.getElementById("player-turn-label").innerHTML = "Waiting for opponent";
+            console.log("Error: invalid number of players: ", gameDetails.numberPlayers);
         }
     }
 
@@ -240,19 +249,6 @@ class GameBoard {
         this.bigBoard[bigI][bigJ][lili][lilj] = player;
     }
 
-    async handleWinner(winner) {
-        //update turn label
-        document.getElementById("player-turn-label").innerHTML = winner + " wins!";
-        document.getElementById("player-turn-label").style.display = "block";
-
-        //update game history
-        await this.saveGameHistory(winner);
-        if (this.ONLINE) {
-            this.playerTurn = this.toggleXO(this.playerTurn);
-            await this.sendMove(this.getGameState());
-        }
-    }
-
     async nextTurn() {
         //check for game winner
         const result = this.checkBigBoard();
@@ -297,47 +293,7 @@ class GameBoard {
             document.getElementById("playerTurn").innerHTML = this.playerTurn;
             document.getElementById("player-turn-label").innerHTML = "Waiting for opponent";
             this.highlightBoard();
-
-
-            // var move;
-            // //get and make opponents move
-            // move = await this.getOpponentMove(); 
-            // this.updateBoard(move.I, move.J, move.i, move.j);
-
-            // //update turn
-            // this.playerTurn = this.toggleXO(this.playerTurn);
-            // document.getElementById("playerTurn").innerHTML = this.playerTurn;
-            // document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
-            // this.highlightBoard();
         }
-    }
-
-    checkWinner(board) {
-        let winner = null;
-
-        // horizontal
-        for (let i = 0; i < 3; i++) {
-            if (this.equals3(board[i][0], board[i][1], board[i][2])) {
-                winner = board[i][0];
-            }
-        }
-        // Vertical
-        for (let i = 0; i < 3; i++) {
-            if (this.equals3(board[0][i], board[1][i], board[2][i])) {
-                winner = board[0][i];
-            }
-        }
-        // Diagonal
-        if (this.equals3(board[0][0], board[1][1], board[2][2])) {
-            winner = board[0][0];
-        }
-        if (this.equals3(board[2][0], board[1][1], board[0][2])) {
-            winner = board[2][0];
-        }
-        if (winner == null && this.is_full(board)) {
-            winner = 'tie';
-        } 
-        return winner;
     }
 
     toggleXO(val) {
@@ -391,6 +347,34 @@ class GameBoard {
         }
     }
 
+    checkWinner(board) {
+        let winner = null;
+
+        // horizontal
+        for (let i = 0; i < 3; i++) {
+            if (this.equals3(board[i][0], board[i][1], board[i][2])) {
+                winner = board[i][0];
+            }
+        }
+        // Vertical
+        for (let i = 0; i < 3; i++) {
+            if (this.equals3(board[0][i], board[1][i], board[2][i])) {
+                winner = board[0][i];
+            }
+        }
+        // Diagonal
+        if (this.equals3(board[0][0], board[1][1], board[2][2])) {
+            winner = board[0][0];
+        }
+        if (this.equals3(board[2][0], board[1][1], board[0][2])) {
+            winner = board[2][0];
+        }
+        if (winner == null && this.is_full(board)) {
+            winner = 'tie';
+        } 
+        return winner;
+    }
+
     checkBigBoard() {
         var tempBoard = [
             ["","",""],
@@ -413,54 +397,17 @@ class GameBoard {
         return this.gameWinner;
     }
 
-    async saveGameHistory(winner) {
-        var versus;
-        var resultLabel;
-        if (this.VS_CPU) {
-            versus = 'Computer';
-            if (this.userSymbol == resultLabel) {
-                resultLabel = 'You';
-            } else {
-                resultLabel = 'Computer';
-            }
-        } else if (this.VS_PLAYER) {
-            versus = 'Local Multiplayer';
-            resultLabel = winner + "'s";
-        } else if (this.ONLINE) {
-            versus = localStorage.getItem("opponent");
-            if (this.userSymbol == winner) {
-                resultLabel = 'You';
-            } else {
-                resultLabel = versus;
-            }
-        }
-        const game = {
-            date: new Date().toDateString(),
-            versus: versus,
-            winner: resultLabel
-        };
-        console.log("Game to be saved: \n\t" + JSON.stringify(game));
-        try {
-            const response = await fetch('/api/gameHistory', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(game),
-            });
-            const data = await response.json();
-            console.log("Data recieved: \n\t" + data);
-            localStorage.setItem('gameHistory', JSON.stringify(data));
-        } catch (error) {
-            this.updateGamesLocal(game);
-            console.error(error);
-        }
-    }
+    async handleWinner(winner) {
+        //update turn label
+        document.getElementById("player-turn-label").innerHTML = winner + " wins!";
+        document.getElementById("player-turn-label").style.display = "block";
 
-    updateGamesLocal(game) {
-        const gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
-        gameHistory.push(game);
-        localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+        if (this.ONLINE) {
+            this.playerTurn = this.toggleXO(this.playerTurn);
+            await this.sendMove(this.getGameState());
+        }
+        //update game history
+        await this.saveGameHistory(winner);
     }
 
     registerEventListeners() {
@@ -487,7 +434,7 @@ class GameBoard {
         };
     }
 
-    updateGameState(gameState) {
+    setGameState(gameState) {
         this.bigBoard = gameState.bigBoard;
         this.playerTurn = gameState.playerTurn;
         this.prevI = gameState.prevI;
@@ -498,27 +445,57 @@ class GameBoard {
         document.getElementById("playerTurn").innerHTML = this.playerTurn;
     }
 
-    async sendMove(gameState) { //should prolly rename these
-        sendMove(gameState); //using ws.js:sendMove()
+    async sendMove(gameState) {
+        sendToWS(gameState); //using ws.js:sendMove()
     }
 
-    async getOpponentMove() {
-        //wait until message is recieved
-        console.log("Waiting for opponent move");
-
-        //set timeout till playerTurn is updated
-        while (this.playerTurn != this.userSymbol) {
-            await new Promise(resolve => setTimeout(resolve, 100));
+    async saveGameHistory(winner) {
+        var versus;
+        var resultLabel;
+        if (this.VS_CPU) {
+            versus = 'Computer';
+            if (this.userSymbol == resultLabel) {
+                resultLabel = 'You';
+            } else {
+                resultLabel = 'Computer';
+            }
+        } else if (this.VS_PLAYER) {
+            versus = 'Local Multiplayer';
+            resultLabel = winner + "'s";
+        } else if (this.ONLINE) {
+            versus = localStorage.getItem("opponentName");
+            if (this.userSymbol == winner) {
+                resultLabel = winner + "'s (You)";
+            } else {
+                resultLabel = winner + "'s (" + versus + ")";
+            }
         }
-        console.log("Opponent move recieved");
-
-        let move = {
-            I: this.prevI,
-            J: this.prevJ,
-            i: this.previ,
-            j: this.prevj
+        const game = {
+            date: new Date().toDateString(),
+            versus: versus,
+            winner: resultLabel
+        };
+        console.log("Game to be saved: \n\t" + JSON.stringify(game));
+        try {
+            const response = await fetch('/api/gameHistory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(game),
+            });
+            const data = await response.json();
+            console.log("Data recieved: \n\t" + data);
+            localStorage.setItem('gameHistory', JSON.stringify(data));
+        } catch (error) {
+            this.updateGamesLocal(game);
+            updateGamesLocal = (game) => {
+                const gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
+                gameHistory.push(game);
+                localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+            }
+            console.error(error);
         }
-        return move;
     }
 
     async deleteGame() {
@@ -532,10 +509,6 @@ class GameBoard {
             console.error(error);
         }
     }
-}
-
-function isValidMove(move) {
-    return gameBoard.validMove(move.I, move.J, move.i, move.j);
 }
 
 function cellClickedEventListener() {
@@ -577,7 +550,7 @@ function cellMouseOutEventListener() {
 
 let gameBoard = new GameBoard();
 gameBoard.registerEventListeners();
-let opponent = localStorage.getItem("opponent");
+let opponent = localStorage.getItem("opponentType");
 gameBoard.setOpponentType(opponent);
 
 export {

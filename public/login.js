@@ -48,12 +48,12 @@ async function loginOrRegister(endpoint) {
 }
 
 function playLocal() {
-  localStorage.setItem("opponent", "player");
+  localStorage.setItem("opponentType", "player");
   window.location.href = 'play.html';
 }
 
 function playAI() {
-  localStorage.setItem("opponent", "cpu");
+  localStorage.setItem("opponentType", "cpu");
   window.location.href = 'play.html';
 }
 
@@ -64,7 +64,7 @@ function playOnline() {
     moreOnlineIdElements[i].style.display = 'block';
     moreOnlineIdElements[i].classList.add('dropdown');
   }
-  localStorage.setItem("opponent", "online");//WORKING HERE Do you have to clear localstorage? playVs: "ai", change this to opponent username <-
+  localStorage.setItem("opponentType", "online");//WORKING HERE wheres oppusername?
 }
 
 document.querySelector("#gameID").addEventListener("input", async (event) => {
@@ -148,12 +148,19 @@ async function joinGame() {
     const gameDetails = result.data;
     if (gameDetails.playingAsX === username) {
       localStorage.setItem("playingAs", "X");
+      if (gameDetails.playingAsO != null) {
+        localStorage.setItem("opponentName", gameDetails.playingAsO);
+      }
     } else if (gameDetails.playingAsO === username) {
       localStorage.setItem("playingAs", "O");
+      if (gameDetails.playingAsX != null) {
+        localStorage.setItem("opponentName", gameDetails.playingAsX);
+      }
     } else {
       console.log("ERROR: User is not playing as X or O");
     }
     localStorage.setItem("playingFirst", gameDetails.playingFirst);
+
   } else {
     console.log("Game registration failed");
   }

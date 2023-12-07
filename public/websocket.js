@@ -81,6 +81,7 @@ socket.onmessage = async (event) => {
         const response = await fetch(`/api/game/${gameID}`);
         const gameDetails = await response.json();
         console.log("Game Details: ", gameDetails);
+        gameBoard.setGameDetail(gameDetails);
         addMessage(` joined the game`, gameDetails.opponent);
     } else {
         console.log("ERROR: Unknown message type: ", data.type);
@@ -93,6 +94,16 @@ socket.onerror = (event) => {
 
 socket.onclose = (event) => {
     addMessage('Disconnected!', 'System');
+    console.log("Clearing localStorage");
+    localStorage.setItem("opponentType", "DISCONNECTED"); 
+    //clear localStorage except username
+    localStorage.removeItem("gameHistory");
+    localStorage.removeItem("gameID");
+    localStorage.removeItem("opponentName");
+    localStorage.removeItem("playingAs");
+    localStorage.removeItem("playingFirst");
+
+    //TODO: redirect to homepage, remove player from DB and have rejoin
 }
 
 function broadcastToGame() {
@@ -111,7 +122,7 @@ function setOnline() {
     socket.send(JSON.stringify(message));
 }
 
-export function sendMove(move) {
+export function sendToWS(move) {
     const message = {
         type: 'gameMove',
         gameID: localStorage.getItem("gameID"),
@@ -124,7 +135,9 @@ export function sendMove(move) {
 }
 
 export function handleOppondentMove(username, gameState) {
-    gameBoard.updateGameState(gameState);
+    gameBoard.setGameState(gameState);
     gameBoard.drawPrevMove();
-    gameBoard.highlightBoard();
+    if (gameState.gameWinner == null) { //WORKING HERE - game winner doesn't save
+        gameBoard.highlightBoard();
+    }
 }
