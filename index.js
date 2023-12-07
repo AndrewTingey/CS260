@@ -379,8 +379,12 @@ async function handleMasterCommands(gameID, message, ws) {
   } else if (message.startsWith("DELETE USER")) {
     const username = message.split(" ")[2];
     console.log("Deleting user: ", username);
-    response = "Deleted user: " + username;
-    DB.deleteUser(username);
+    const result = await DB.deleteUser(username);
+    if (result === null) {
+      response = "ERROR: No user found with username: " + username;
+    } else {
+      response = "Deleted user: " + username;
+    }
   } else  {
     response = "Unknown command: \'" + message + "\'\n\tType HELP for a list of commands";
   }

@@ -174,6 +174,12 @@ async function clearLiveGames() {
 }
 
 async function deleteUser(username) {
+  userExists = await getUser(username);
+  if (!userExists) {
+    console.log("ERROR: No user found with username: ", username);
+    return null;
+  }
+  
   const result = await userCollection.deleteOne({ email: username });
   return result;
 }
