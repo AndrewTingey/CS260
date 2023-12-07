@@ -252,9 +252,6 @@ function broadcastToGame(gameID, data, ws) {
         //send data to all connections except sender
         if (c.ws !== ws) {
           c.ws.send(data);
-          console.log("Sent message to connection: ", c);
-        } else {
-          console.log("Not sending message to sender: ", c);
         }
       } catch (e) {
         console.log("ERROR: Failed to send message to connection: ", c);

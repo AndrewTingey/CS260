@@ -158,7 +158,7 @@ class GameBoard {
         var cellContext = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[this.prevI*3+this.prevJ].getElementsByTagName("td")[this.previ*3+this.prevj];
         cellContext.textContent = this.toggleXO(this.playerTurn); //previous move, not this move
         cellContext.style.color = "var(--text-color)";
-        this.bigBoard[this.prevI][this.prevJ][this.previ][this.prevj] = this.playerTurn;
+        this.bigBoard[this.prevI][this.prevJ][this.previ][this.prevj] = this.toggleXO(this.playerTurn);
         let localWinner = this.checkWinner(this.bigBoard[this.prevI][this.prevJ]);
         if(localWinner != null) {
             var largeTable = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[this.prevI*3+this.prevJ];
@@ -166,7 +166,11 @@ class GameBoard {
             largeTable.style.fontSize = "100px";
         }
         //update turn label
-        document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
+        if(this.gameWinner != null) {
+            this.handleWinner(this.gameWinner);
+        } else {
+            document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
+        }
     }
 
     validMove(bigI, bigJ, lili, lilj) {
@@ -236,18 +240,26 @@ class GameBoard {
         this.bigBoard[bigI][bigJ][lili][lilj] = player;
     }
 
+    async handleWinner(winner) {
+        //update turn label
+        document.getElementById("player-turn-label").innerHTML = winner + " wins!";
+        document.getElementById("player-turn-label").style.display = "block";
+
+        //update game history
+        await this.saveGameHistory(winner);
+        if (this.ONLINE) {
+            this.playerTurn = this.toggleXO(this.playerTurn);
+            await this.sendMove(this.getGameState());
+        }
+    }
+
     async nextTurn() {
         //check for game winner
-        var result = this.checkBigBoard();
+        const result = this.checkBigBoard();
         
         //theres a winner!
         if (result != null) {
-            //update turn label
-            document.getElementById("player-turn-label").innerHTML = result + " wins!";
-            document.getElementById("player-turn-label").style.display = "block";
-
-            //update game history
-            await this.saveGameHistory(result);
+            this.handleWinner(result);
             return;
         }
 
@@ -402,10 +414,30 @@ class GameBoard {
     }
 
     async saveGameHistory(winner) {
+        var versus;
+        var resultLabel;
+        if (this.VS_CPU) {
+            versus = 'Computer';
+            if (this.userSymbol == resultLabel) {
+                resultLabel = 'You';
+            } else {
+                resultLabel = 'Computer';
+            }
+        } else if (this.VS_PLAYER) {
+            versus = 'Local Multiplayer';
+            resultLabel = winner + "'s";
+        } else if (this.ONLINE) {
+            versus = localStorage.getItem("opponent");
+            if (this.userSymbol == winner) {
+                resultLabel = 'You';
+            } else {
+                resultLabel = versus;
+            }
+        }
         const game = {
             date: new Date().toDateString(),
-            versus: this.VS_CPU ? 'Computer' : 'Local Multiplayer',
-            winner: winner + "'s"
+            versus: versus,
+            winner: resultLabel
         };
         console.log("Game to be saved: \n\t" + JSON.stringify(game));
         try {

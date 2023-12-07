@@ -64,7 +64,7 @@ function playOnline() {
     moreOnlineIdElements[i].style.display = 'block';
     moreOnlineIdElements[i].classList.add('dropdown');
   }
-  localStorage.setItem("opponent", "online");
+  localStorage.setItem("opponent", "online");//WORKING HERE Do you have to clear localstorage? playVs: "ai", change this to opponent username <-
 }
 
 document.querySelector("#gameID").addEventListener("input", async (event) => {

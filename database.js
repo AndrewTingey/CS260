@@ -122,7 +122,6 @@ async function registerGame(gameID, user) {
   }
   setGame(gameID, game);
   return game;
-  //WORKING HERE - NEVER UPDATES TO 2 PLAYERS
 }
 
 module.exports = { 
