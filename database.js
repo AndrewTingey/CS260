@@ -160,7 +160,6 @@ async function removePlayerFromGame(gameID, user) {
 
 async function deleteGame(gameID) {
   let existingGame = await getGame(gameID);
-  //no game, create one
   if (!existingGame) {
     console.log("ERROR: No game found with gameID: ", gameID);
     return null;
@@ -175,20 +174,55 @@ async function clearLiveGames() {
 }
 
 async function deleteUser(username) {
-  const result = await userCollection.deleteOne({ username });
+  const result = await userCollection.deleteOne({ email: username });
   return result;
+}
+
+async function getAllUsers() {
+  const query = {};
+  const options = { limit: 100 };
+  const cursor = await userCollection.find(query, options);
+  const users = await cursor.toArray();
+  return users;
+}
+
+async function getAllUsernames() {
+  const query = {};
+  const options = { limit: 100 };
+  const cursor = await userCollection.find(query, options);
+  const users = await cursor.toArray();
+  let usernames = [];
+  users.forEach(user => {
+    usernames.push(user.email);
+  });
+  return usernames;
+}
+
+async function getAllGames() {
+  const query = {};
+  const options = { limit: 100 };
+  const cursor = await liveGamesCollection.find(query, options);
+  const games = await cursor.toArray();
+  let gamesList = [];
+  games.forEach(game => {
+    gamesList.push(game.gameID);
+  });
+  return gamesList;
 }
 
 module.exports = { 
   addToGameHistory, 
   getGameHistory, 
   getUser,
+  getAllUsers,
+  getAllUsernames,
   getUserByToken,
   createUser, 
   deleteUser,
   clearGameHistory,
   removePlayerFromGame,
   getGame,
+  getAllGames,
   setGame,
   deleteGame,
   registerGame,

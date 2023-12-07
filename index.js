@@ -320,17 +320,45 @@ async function removePlayerFromGame(gameID, username) {
   }
 }
 
-function handleMasterCommands(gameID, message, ws) {
+async function handleMasterCommands(gameID, message, ws) {
   let response = "";
   if (message === "Hi") {
     console.log("Hello");
     response = "Hello, master";
   } else if (message === "HELP") {
-    response = "Commands: HELP, DELETE LIVE GAMES, DELETE GAME HISTORY <username>, DELETE CONNECTIONS, DELETE USER <username>";
-  } else if (message === "DELETE LIVE GAMES") {
+    response = "Commands: HELP, LIST ALL GAMES, LIST ALL USERNAMES, LIST ALL USER DETAILS, DELETE ALL LIVE GAMES, DELETE GAME [gameID], DELETE GAME HISTORY [username], DELETE ALL CONNECTIONS, DELETE USER [username]";
+  } else if (message === "DELETE ALL LIVE GAMES") {
     console.log("Deleting all live games...");
     response = "Deleted all live games";
     DB.clearLiveGames();
+  } else if (message === "LIST ALL GAMES") {
+    console.log("Listing all games...");
+    const games = await DB.getAllGames();
+    response = "All games: " + JSON.stringify(games);
+  } else if (message === "LIST ALL USERNAMES") {
+    console.log("Listing all usernames...");
+    const usernames = await DB.getAllUsernames();
+    response = "All usernames: \n\t";
+    for (let i = 0; i < usernames.length; i++) {
+      response += usernames[i];
+      if (i < usernames.length - 1) {
+        response += "\n\t";
+      }
+    }
+  } else if (message === "LIST ALL USER DETAILS") {
+    console.log("Listing all users...");
+    const users = await DB.getAllUsers();
+    response = "All users: " + JSON.stringify(users);
+  } else if (message.startsWith("DELETE GAME")) {
+    const gameID = message.split(" ")[2];
+    console.log("Deleting game: ", gameID);
+    result = await DB.deleteGame(gameID);
+    if (result === null) {
+      console.log("ERROR: No game found with gameID: ", gameID);
+      response = "ERROR: No game found with gameID: " + gameID;
+    } else {
+      response = "Deleted game: " + gameID;
+    }
   } else if (message.startsWith("DELETE GAME HISTORY")) {
     const username = message.split(" ")[3];
     console.log("Deleting game history for: ", username);
@@ -353,6 +381,8 @@ function handleMasterCommands(gameID, message, ws) {
     console.log("Deleting user: ", username);
     response = "Deleted user: " + username;
     DB.deleteUser(username);
+  } else  {
+    response = "Unknown command: \'" + message + "\'\n\tType HELP for a list of commands";
   }
   messageData = {
     type: 'chatMessage',
