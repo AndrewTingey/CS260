@@ -4,10 +4,18 @@ import { GameHistory } from './gamehistory/gamehistory.jsx';
 import { About } from './about/about.jsx';
 import { Play } from './play/play.jsx';
 import { Home } from './home/home.jsx';
+import { Login } from './home/login.jsx';
+import { GameMenu } from './home/gamemenu.jsx';
+import { AuthState } from './home/authState.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
 
 export default function App() {
+    const [username, setUserName] = React.useState(localStorage.getItem('username') || '');
+    const currentAuthState = username ? AuthState.Authenticated : AuthState.Unauthenticated;
+    const [authState, setAuthState] = React.useState(currentAuthState);
+
+
     return (
         <div className='body'>
             <header>
@@ -26,6 +34,7 @@ export default function App() {
 
             <div className="maincontents">
                 <Routes>
+                    <Route path="/" element={<Login />} />
                     <Route path="/home" element={<Home />} />
                     <Route path="/play" element={<Play />} />
                     <Route path="/gamehistory" element={<GameHistory />} />

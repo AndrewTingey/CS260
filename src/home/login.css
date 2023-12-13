@@ -1,0 +1,46 @@
+#email {
+    width: 100%;
+    margin-right: 10px;
+  }
+  
+  #password {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .login-buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      justify-items: center;
+  }
+  
+  .login-inputs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  #sign-in {
+      margin-right: 10px;
+  }
+  
+  #register {
+      margin-left: 10px;
+  }
+  
+  @keyframes dropdown {
+    from {
+      max-height: 0;
+      opacity: 0;
+    }
+    to {
+      max-height: 50px; /* Adjust this value based on your needs */
+      opacity: 1;
+    }
+  }
+  
+  .more-online-id.dropdown {
+    overflow: hidden;
+    animation: dropdown 0.5s ease-in-out forwards;
+  }
