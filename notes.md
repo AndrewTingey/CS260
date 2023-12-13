@@ -123,20 +123,20 @@ nothings here
 2. What do HTTP status codes in the 300, 400, 500 range indicate?
 3. What does the HTTP header content-type allows you to do?
 4. What do the following attributes of a cookie do?
-'''
+```
 Domain
 Path
 SameSite
 HTTPOnly
-'''
+```
 5. Assuming the following Express middleware, what would be the console.log output for an HTTP GET request with a URL path of /foo/bar?
 6. Given the following Express service code: What does the following JavaScript fetch return?
     app.use() for example
     api.post() for example
 7. Given the following MongoDB query
-'''
+```
 { cost: { $gt: 10 }, name: /fran.*/}
-'''
+```
 select all of the matching documents.
     - costs > 10 and name starts with fran-
     - . means any character
@@ -162,7 +162,7 @@ select all of the matching documents.
 12. Assuming a HTML document with a 
 <div id="root"></div>
 element, what content will the following React component generate?
-'''
+```
       function Welcome(props) {
         return <h1>Hello, {props.name}</h1>;
       }
@@ -177,7 +177,7 @@ element, what content will the following React component generate?
       }
       const root = ReactDOM.createRoot(document.getElementById('root'));
       root.render(<App />);
-'''
+```
     - Hello, Sara
     - Hello, Cahal
     - Hello, Edite
@@ -194,7 +194,15 @@ element, what content will the following React component generate?
     }
     const root = ReactDOM.createRoot(document.getElementById('root')); 
     root.render(<Numbers/>);
-What does the following React component do?
+    - print in the order they are (not sorted) because of <ul>: 
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+
+14. What does the following React component do?
+```
 function Example() {
   // Declare a new state variable, which we'll call "count"  
   const [count, setCount] = useState(0);
@@ -207,8 +215,18 @@ function Example() {
     </div>
   );
 }
-What are React Hooks used for?
-What is the useEffect hook used for?
+```
+    - increase count by one
+    - You clicked 1 times
+
+15. What are React Hooks used for?
+    - modify the state of a component
+    - life cycle events
+
+16. What is the useEffect hook used for?
+    - watches life cycle events and runs stuff based off of lifecycle event
+    - update the page when things change
+
 What does this code do?
 export default function App() {
   return (
