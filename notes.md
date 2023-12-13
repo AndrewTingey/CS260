@@ -227,7 +227,8 @@ function Example() {
     - watches life cycle events and runs stuff based off of lifecycle event
     - update the page when things change
 
-What does this code do?
+17. What does this code do?
+```
 export default function App() {
   return (
     <BrowserRouter>
@@ -242,7 +243,10 @@ export default function App() {
     </BrowserRouter>
   );
 }
-What role does npm play in web development?
+```
+    - renders stuff based on route
+
+18. What role does npm play in web development?
 What does package.json do in a npm project?
 What does the fetch function do?
 What does node.js do?
