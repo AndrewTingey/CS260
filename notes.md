@@ -129,7 +129,9 @@ Path
 SameSite
 HTTPOnly
 ```
-5. Assuming the following Express middleware, what would be the console.log output for an HTTP GET request with a URL path of /foo/bar?
+5. Assuming the following Express middleware, what would be the console.log output for an HTTP GET request with a URL path of '/foo/bar'?
+
+
 6. Given the following Express service code: What does the following JavaScript fetch return?
     app.use() for example
     api.post() for example
@@ -160,9 +162,9 @@ select all of the matching documents.
 
 
 12. Assuming a HTML document with a 
-<div id="root"></div>
+```<div id="root"></div>```
 element, what content will the following React component generate?
-```
+```js 
       function Welcome(props) {
         return <h1>Hello, {props.name}</h1>;
       }
@@ -202,7 +204,7 @@ element, what content will the following React component generate?
     - 5
 
 14. What does the following React component do?
-```
+```js
 function Example() {
   // Declare a new state variable, which we'll call "count"  
   const [count, setCount] = useState(0);
@@ -228,7 +230,7 @@ function Example() {
     - update the page when things change
 
 17. What does this code do?
-```
+```js
 export default function App() {
   return (
     <BrowserRouter>
@@ -247,7 +249,19 @@ export default function App() {
     - renders stuff based on route
 
 18. What role does npm play in web development?
-What does package.json do in a npm project?
-What does the fetch function do?
-What does node.js do?
-What does Vite do?
+    - manages node packages
+    - allows you to download third party packages
+
+19. What does package.json do in a npm project?
+    - specify certains scripts such as a deployment script
+    - what file to run project with
+    - name and other meta information
+
+20. What does the fetch function do?
+    - api calls
+
+21. What does node.js do?
+    - runs server
+
+22. What does Vite do?
+    - allows to bundle all code together for production to display with react to deploy to a server
