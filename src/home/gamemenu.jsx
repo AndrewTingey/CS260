@@ -6,11 +6,16 @@ export function GameMenu() {
     const playLocal = () => {
         // TODO: Implement playLocal function
         console.log("playLocal");
+        localStorage.setItem("opponentType", "player");
+        window.location.href = "/play";
+
     };
 
     const playAI = () => {
         // TODO: Implement playAI function
         console.log("playAI");
+        localStorage.setItem("opponentType", "cpu");
+        window.location.href = "/play";
     };
 
     const playOnline = () => {
@@ -37,11 +42,17 @@ export function GameMenu() {
     const logout = () => {
         // TODO: Implement logout function
         console.log("logout");
+        localStorage.removeItem("username");
+        fetch("/api/auth/logout", {
+            method: "DELETE",
+        }).then(() => (window.location.href = "/"));
     };
 
     return (
         <>
             <div className="login">
+                <h1 className="text-center">Welcome</h1>
+                <p className="text-center">Select a game mode</p>
                 <div className="container d-flex flex-column justify-content-center align-items-center">
                     <div className="text-center" id="playerName"></div>
                     <Button type="button" className="btn btn-primary my-1 w-100" onClick={playLocal}>Pass 'n' Play</Button>
