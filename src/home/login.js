@@ -2,7 +2,7 @@
     const username = localStorage.getItem('username');
     console.log("Username: \n\t", username);
     if (username) {
-      document.querySelector('#playerName').textContent = username;
+      // document.querySelector('#playerName').textContent = username;
       setDisplay('loginControls', 'none');
       setDisplay('playControls', 'flex', 'column');
     } else {
@@ -40,7 +40,6 @@
     } else {
       localStorage.setItem("username", username);
   
-      document.querySelector('#playerName').textContent = username;
       setDisplay('loginControls', 'none');
       setDisplay('playControls', 'flex', 'column');
       // window.location.href = "play.html";

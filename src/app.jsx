@@ -1,11 +1,9 @@
 import React from 'react';
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { Home } from './home/home.jsx';
+import { Play } from './play/play.jsx';
 import { GameHistory } from './gamehistory/gamehistory.jsx';
 import { About } from './about/about.jsx';
-import { Play } from './play/play.jsx';
-import { Home } from './home/home.jsx';
-import { Login } from './home/login.jsx';
-import { GameMenu } from './home/gamemenu.jsx';
 import { AuthState } from './home/authState.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
@@ -34,8 +32,37 @@ export default function App() {
 
             <div className="maincontents">
                 <Routes>
-                    <Route path="/" element={<Login />} />
-                    <Route path="/home" element={<Home />} />
+                    <Route path="/" 
+                        element={
+                            <Home
+                                username={username}
+                                authState={authState}
+                                onLogin={(loginUserName) => {
+                                    console.log("onLogin: " + loginUserName);
+                                }}
+                                onAuthChange={(username, authState) => {
+                                    setUserName(username);
+                                    setAuthState(authState);
+                                }}
+                            />
+                        }
+                        exact
+                    />
+                    <Route path="/home"
+                        element={
+                            <Home
+                                username={username}
+                                authState={authState}
+                                onLogin={(loginUserName) => {
+                                    console.log("onLogin: " + loginUserName);
+                                }}
+                                onAuthChange={(username, authState) => {
+                                    setUserName(username);
+                                    setAuthState(authState);
+                                }}
+                            />
+                        }
+                    />
                     <Route path="/play" element={<Play />} />
                     <Route path="/gamehistory" element={<GameHistory />} />
                     <Route path="/about" element={<About />} />

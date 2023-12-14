@@ -44,3 +44,11 @@
     overflow: hidden;
     animation: dropdown 0.5s ease-in-out forwards;
   }
+
+  .login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10%;
+  }
