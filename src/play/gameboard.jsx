@@ -1,10 +1,8 @@
 import React from "react";
 import "./play.css";
-import { GameBoard } from "./gameboard.js";
+import { gameBoard } from "./play.jsx";
 
 export function Gameboard() {
-
-
     return (
         <table className="outer-table">
             <tbody>
@@ -73,17 +71,16 @@ export function Gameboard() {
     );
 }
 
+//TODO WORKING HERE THIS DOESNT WORK
 function SmallBoard(props) {
-    const [cells, setCells] = React.useState(Array(3).fill(Array(3).fill(null)));
     const [hoveredCell, setHoveredCell] = React.useState(null); // [i, j]
     const I = props.I;
     const J = props.J;
 
     const handleCellClick = (i, j) => {
-        console.log(`Clicked on cell ${I}, ${J}, ${i}, ${j}`)
-        const newCells = cells.map(row => [...row]); // create a deep copy of cells
-        newCells[i][j] = 'X';
-        setCells(newCells);
+        console.log(`Clicked on cell ${I}, ${J}, ${i}, ${j}`);
+        gameBoard.updateBoard(I, J, i, j);
+        gameBoard.nextTurn();
     };
 
     const handleCellMouseOver = (i, j) => {
@@ -104,10 +101,11 @@ function SmallBoard(props) {
     return (
         <table className="inner-table">
             <tbody>
-                {cells.map((row, i) => (
+                {gameBoard.bigBoard[I][J].map((row, i) => (
                     <tr key={i}>
                         {row.map((cell, j) => {
-                            const isValid = isValidMove(I, J, i, j);
+                            const isValid = gameBoard.validMove(I, J, i, j);
+                            const isBlank = gameBoard.bigBoard[I][J][i][j] === '';
                             return (
                                 <td
                                     key={j}
@@ -116,11 +114,11 @@ function SmallBoard(props) {
                                     onMouseOver={() => isValid && handleCellMouseOver(i, j)}
                                     onMouseOut={handleCellMouseOut}
                                     style={{
-                                        color: isValid && cell === null && hoveredCell?.i === i && hoveredCell?.j === j ? 'lightgray' : 'black',
-                                        cursor: isValid && cell === null ? (hoveredCell?.i === i && hoveredCell?.j === j ? 'pointer' : 'default') : 'not-allowed',
+                                        color: isValid && isBlank && hoveredCell?.i === i && hoveredCell?.j === j ? 'lightgray' : 'black',
+                                        cursor: isValid && isBlank ? (hoveredCell?.i === i && hoveredCell?.j === j ? 'pointer' : 'default') : 'not-allowed',
                                     }}
                                 >
-                                    {cell || (isValid && hoveredCell?.i === i && hoveredCell?.j === j ? 'X' : '')}
+                                    {cell || (isValid && hoveredCell?.i === i && hoveredCell?.j === j ? gameBoard.playerTurn : '')}
                                 </td>
                             );
                         })}
@@ -146,7 +144,11 @@ export function ChatBox() {
     );
 }
 
-function isValidMove(I, J, i, j) {
-    if ((I + J + i + j) % 3 === 0) { return true; }
-    return true;
+export function DrawMove({ I, J, i, j, move }) {
+    const cell = document.querySelector(
+        `.inner-table:nth-child(${I + 1}) > tbody > tr:nth-child(${i + 1}) > td:nth-child(${j + 1})`
+    );
+    cell.innerText = move;
+
+    return null;
 }

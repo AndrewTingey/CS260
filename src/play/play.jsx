@@ -3,8 +3,9 @@ import React from 'react';
 import { Gameboard, ChatBox } from './gameboard.jsx';
 import { GameBoard } from './gameboard.js';
 
+let gameBoard = new GameBoard();
+
 export function Play() {
-    let gameBoard = new GameBoard();
     gameBoard.setOpponentType("player"); //TODO get this from props
 
 
@@ -21,3 +22,5 @@ export function Play() {
         </main>
     );
 }
+
+export { gameBoard };

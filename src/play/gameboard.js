@@ -151,9 +151,9 @@ export class GameBoard {
     }
 
     updateBoard(bigI, bigJ, lili, lilj) {
-        var cellContext = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[bigI*3+bigJ].getElementsByTagName("td")[lili*3+lilj];
-        cellContext.textContent = this.playerTurn;
-        cellContext.style.color = "var(--text-color)";
+        // var cellContext = document.querySelectorAll(".outer-table")[0].getElementsByClassName("big-board")[bigI*3+bigJ].getElementsByTagName("td")[lili*3+lilj];
+        // cellContext.textContent = this.playerTurn;
+        // cellContext.style.color = "var(--text-color)";
         this.bigBoard[bigI][bigJ][lili][lilj] = this.playerTurn;
         this.previ = lili;
         this.prevj = lilj;
@@ -267,8 +267,8 @@ export class GameBoard {
         if (this.VS_PLAYER) {
             this.playerTurn = this.toggleXO(this.playerTurn);
             this.userSymbol = this.playerTurn;
-            document.getElementById("playerTurn").innerHTML = this.playerTurn;
-            document.getElementById("player-turn-label").innerHTML = this.playerTurn + "'s turn";
+            let label = this.playerTurn + "'s turn";
+            // setPlayerTurnLabel(label);
             this.highlightBoard();
         } else if (this.VS_CPU) {
             this.playerTurn = this.toggleXO(this.playerTurn);
