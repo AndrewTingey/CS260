@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const app = express();
 const DB = require('./database.js');
 const {WebSocketServer} = require('ws');
+const path = require('path');
 
 const authCookieName = 'token';
 
@@ -148,7 +149,8 @@ apiRouter.delete('/game/:gameID', async (req, res) => {
 
 // Return the application's index.html file
 app.use((req, res) => {
-  res.sendFile('index.html', {root: 'public'});
+  console.log("Sending index.html");
+  res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 function setAuthCookie(res, authToken) {
