@@ -95,3 +95,12 @@ For this deliverable I used webSocket to play the game online
 - **Frontend makes WebSocket connection** - done!
 - **Data sent over WebSocket connection** - i got the chat working, but it sent to everyone connected. I got ambitious and tried sending game moves over websocket before connecting only 2 players at a time and ended up breaking a lot of what was working. I've submitted my last successful git commit
 - **WebSocket data displayed** - anybody connected to any game can message in the same chat. I plan to limit this to only those in the same game. Also i plan to hide the chat box for local games when we do react. 
+
+## React deliverable
+
+For this deliverable I converted the application over to use React.
+
+- **Bundled and transpiled** - done!
+- **Components** - About, gamehistory, home (login/gamemenu), and play are all components
+- **Router** - Routing between all pages is done by react
+- **Hooks** - the game board uses hooks to dynamically display game moves and the about page uses hooks to show api jokes 

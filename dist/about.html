@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Tell browsers not to scale the viewport automatically -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ultimate Tic-Tac-Toe</title>
+    <link rel="icon" href="tic-tac-toe.ico" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="about.css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+    <script src="main.js"></script>
+    <style>
+        table {
+          border-collapse: collapse;
+        }
+      
+        th, td {
+          border: 1px solid black;
+          padding: 8px;
+          text-align: left;
+        }
+      </style>
+  </head>
+  <body>
+    <!-- Use header, main, and footer elements to give semantic structure -->
+    <header>
+      <h1>Ultimate Tic-Tac-Toe<sup>&reg;</sup></h1>
+
+      <!-- Navigation elements -->
+      <nav>
+        <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
+          <menu>
+            <a href="index.html">Home</a>
+            <a href="play.html">Play</a>
+            <a href="gamehistory.html">Game Log</a>
+            <a href="about.html" class="active">About</a>
+          </menu>
+      </nav>
+
+      <!-- Since we don't have the ability to style we use old style HTML to give some visual formatting -->
+      <hr />
+    </header>
+
+    <main>
+        <div id="picture" class="picture-box"><img width="400px" src="https://images.pexels.com/photos/411207/pexels-photo-411207.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="random" /></div>
+  
+        <p class="quote-box fly-in">
+          Ultimate Tic-Tac-Toe is a interesting twist on a simple game about X's and O's. The object of the game is still 
+          to complete 3 in a row, but within each box there is another game of Tic-Tac-Toe. The player must win 3 games in a row to win!
+        </p>
+  
+        <p class="quote-box fly-in">
+            The game is played on a 3x3 grid of 3x3 grids. The first player can place their mark anywhere on the board. 
+            The next player must then place their mark in the grid that corresponds to the location of the previous player's mark. 
+            For example, if the first player places their mark in the top right corner of the center grid, the next player must place their mark in the top right grid.
+        </p>
+  
+        <div class="quote" id="quote">
+          <div>Tic-Tac-Toe is too easy.</div>
+          <div class="author">Andrew Tingey</div>
+        </div>
+
+        <br>
+        <button class="btn btn-primary mx-4" onclick="newJoke()">Tell me a joke.</button>
+        
+        <div id="joke">
+        </div>
+        
+    </main>
+
+
+      <footer>
+        <div class="d-flex justify-content-end mx-2">
+          <p>Made by</p>
+          <div class="d-flex justify-content-end mx-1">
+            <a href="https://github.com/AndrewTingey/CS260">Andrew Tingey</a>
+          </div>
+        </div>
+      </footer>
+      <script src="about.js"></script>
+  </body>
+</html>

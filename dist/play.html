@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Tell browsers not to scale the viewport automatically -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ultimate Tic-Tac-Toe</title>
+    <link rel="icon" href="tic-tac-toe.ico" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="play.css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+    
+  </head>
+  
+  <body>
+    <!-- Use header, main, and footer elements to give semantic structure -->
+    <header>
+      <h1>Ultimate Tic-Tac-Toe<sup>&reg;</sup></h1>
+
+      <!-- Navigation elements -->
+      <nav>
+        <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
+          <menu>
+            <a href="index.html">Home</a>
+            <a href="play.html" class="active">Play</a>
+            <a href="gamehistory.html">Game Log</a>
+            <a href="about.html">About</a>
+          </menu>
+          <p id="playerName"></p>
+          <p id="gameID"></p>
+          <p id="playingAs"></p>
+          <p id="playingFirst"></p>
+          <p id="playerTurn"></p>
+          <p id="opponentName"></p>
+      </nav>
+
+      <!-- Since we don't have the ability to style we use old style HTML to give some visual formatting -->
+      <hr />
+    </header>
+
+    <main>
+        <h1 id="player-turn-label">
+          Select a square to start the game!
+        </h1>
+          
+        <table class="outer-table">
+            <tr>
+                <td class="big-board highlight">
+                    <table class="inner-table">
+                        <tr>
+                            <td></td>
+                            <td class="vertical"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="horizontal"></td>
+                            <td class="vertical horizontal"></td>
+                            <td class="horizontal"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="vertical"></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="big-vertical big-board">
+                    <table class="inner-table">
+                      <tr>
+                        <td></td>
+                        <td class="vertical"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="horizontal"></td>
+                        <td class="vertical horizontal"></td>
+                        <td class="horizontal"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="vertical"></td>
+                        <td></td>
+                    </tr>
+                    </table>
+                </td>
+                <td class="big-board">
+                    <table class="inner-table">
+                      <tr>
+                        <td></td>
+                        <td class="vertical"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="horizontal"></td>
+                        <td class="vertical horizontal"></td>
+                        <td class="horizontal"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="vertical"></td>
+                        <td></td>
+                    </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+              <td class="big-horizontal big-board">
+                <table class="inner-table">
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                </table>
+              </td>
+              <td class="big-horizontal big-vertical big-board">
+                <table class="inner-table">
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                </table>
+              </td>
+              <td class="big-horizontal big-board">
+                <table class="inner-table">
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td class="big-board">
+                <table class="inner-table">
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                </table>
+              </td>
+              <td class="big-vertical big-board">
+                <table class="inner-table">
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                </table>
+              </td>
+              <td class="big-board">
+                <table class="inner-table">
+                  <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="horizontal"></td>
+                    <td class="vertical horizontal"></td>
+                    <td class="horizontal"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="vertical"></td>
+                    <td></td>
+                </tr>
+                </table>
+              </td>
+            </tr>
+        </table>
+
+        <br />
+        <div class="chat-box">
+          <h6>Chat History:</h6>
+          <div class ="chat-history">
+
+          </div>
+          <br />
+          <form class="d-flex justify-content-center mx-2">
+            <label for="chat-input">Chat:</label>
+            <input type="text" id="chat-input" name="chat-input">
+            <button id="send-button" type="submit">Send</button>
+          </form>
+        </div>
+    </main>
+
+    <footer>
+      <div class="d-flex justify-content-end mx-2">
+        <p>Made by</p>
+        <div class="d-flex justify-content-end mx-1">
+          <a href="https://github.com/AndrewTingey/CS260">Andrew Tingey</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script type="module" src="play.js"></script>
+    <script type="module" src="minimax.js"></script>
+    <script type="module" src="websocket.js"></script>
+  </body>
+</html>
