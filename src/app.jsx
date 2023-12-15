@@ -1,4 +1,5 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { Home } from './home/home.jsx';
 import { Play } from './play/play.jsx';
@@ -63,7 +64,15 @@ export default function App() {
                             />
                         }
                     />
-                    <Route path="/play" element={<Play />} />
+                    <Route path="/playonline/:gameID" element={<Play
+                        opponent="online"
+                    />} />
+                    <Route path="/playCPU" element={<Play
+                        opponent="cpu"
+                    />} />
+                    <Route path="/playlocal" element={<Play
+                        opponent="player"
+                    />} />
                     <Route path="/gamehistory" element={<GameHistory />} />
                     <Route path="/about" element={<About />} />
                     <Route path="*" element={<NotFound />} />
